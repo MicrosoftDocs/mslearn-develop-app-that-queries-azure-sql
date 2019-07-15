@@ -32,7 +32,7 @@ param(
     $adminlogin,
 
     [Parameter(Mandatory = $True)]
-    [securestring]
+    [string]
     $adminPassword,
 
     [Parameter(Mandatory = $True)]
@@ -64,7 +64,7 @@ param(
     $dbCapacity,
 
     [Parameter(Mandatory = $True)]
-    [boolean]
+    [string]
     $dbZoneRedundant,
 
     [Parameter(Mandatory = $True)]
