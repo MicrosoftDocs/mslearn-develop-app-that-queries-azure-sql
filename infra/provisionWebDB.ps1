@@ -103,27 +103,34 @@ Write-Output ""
 
 function 1_Up {
     # Create a resource group
+    Write-Output "Creating resource group..."
     az group create `
         --name $resourceGroupName `
         --location $location
+    Write-Output "Done creating resource group"
 
     # Create a logical server in the resource group
+    Write-Output "Creating sql server..."
     az sql server create `
         --name $servername `
         --resource-group $resourceGroupName `
         --location $location  `
         --admin-user $adminlogin `
         --admin-password $adminPassword
+    Write-Output "Done creating sql server"
 
     # Configure a firewall rule for the server
+    Write-Output "Creating firewall rule for sql server..."
     az sql server firewall-rule create `
         --resource-group $resourceGroupName `
         --server $servername `
         -n AllowYourIp `
         --start-ip-address $startip `
         --end-ip-address $endip `
+    Write-Output "Done creating firewall rule for sql server"
 
     # Create a database in the server with zone redundancy as false
+    Write-Output "Create sql db $dbName..."
     az sql db create `
         --resource-group $resourceGroupName `
         --server $servername `
@@ -132,15 +139,27 @@ function 1_Up {
         --family $dbFamily `
         --capacity $dbCapacity `
         --zone-redundant $dbZoneRedundant
-
-        az webapp up `
-            --resource-group $resourceGroupName `
-            --sku $webAppSku `
-            --name $webAppName
+    Write-Output "Done creating sql db"
+     
+    # create app service plan
+    #
+    Write-Output "creating app service plan..."
+    az appservice plan create `
+        --name "$webAppName" + "plan" `
+        --resource-group $resourceGroupName `
+        --sku $webAppSku
+    Write-Output "done creating app service plan"
+    
+    Write-Output "creating web app..."
+    az webapp create `
+        --name $webAppName `
+        --plan "$webAppName" + "plan" `
+        --resource-group $resourceGroupName
+    Write-Output "done creating web app"
 }
 
 Install-Module -Name VersionInfrastructure -Force -Scope CurrentUser
 Update-InfrastructureVersion `
-    -infraToolsFunctionName "infratoolsfunc" `
+    -infraToolsFunctionName "$Env:IaC_EXCLUSIVE_INFRATOOLSFUNCTIONNAME" `
     -infraToolsTableName "$Env:IAC_INFRATABLENAME" `
     -deploymentStage "$Env:IAC_DEPLOYMENTSTAGE"
