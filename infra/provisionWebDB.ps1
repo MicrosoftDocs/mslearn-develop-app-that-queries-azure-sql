@@ -156,3 +156,11 @@ Write-Output ""
         --plan $("$webAppName" + "plan") `
         --resource-group $resourceGroupName
     Write-Output "done creating web app"
+
+    Write-Output "Setting connection string.."
+    az webapp config connection-string set `
+        --connection-string-type "SQLAzure" `
+        --resource-group $resourceGroupName `
+        --settings Server=tcp:"$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+
+    Write-Output "Done setting connection string"
