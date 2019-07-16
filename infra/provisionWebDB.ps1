@@ -145,7 +145,7 @@ function 1_Up {
     #
     Write-Output "creating app service plan..."
     az appservice plan create `
-        --name "$webAppName" + "plan" `
+        --name $("$webAppName" + "plan") `
         --resource-group $resourceGroupName `
         --sku $webAppSku
     Write-Output "done creating app service plan"
