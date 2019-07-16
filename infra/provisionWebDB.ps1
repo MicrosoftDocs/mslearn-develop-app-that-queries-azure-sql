@@ -52,8 +52,8 @@ param(
     $dbName,
 
     [Parameter(Mandatory = $True)]
-    [string]
-    $dbEdition,
+    [strinig]
+    $dbEdtion,
 
     [Parameter(Mandatory = $True)]
     [string]
@@ -101,7 +101,7 @@ Write-Output "Done"
 Write-Output ""
 #endregion
 
-function 1_Up {
+
     # Create a resource group
     Write-Output "Creating resource group..."
     az group create `
@@ -156,10 +156,3 @@ function 1_Up {
         --plan $("$webAppName" + "plan") `
         --resource-group $resourceGroupName
     Write-Output "done creating web app"
-}
-
-Install-Module -Name VersionInfrastructure -Force -Scope CurrentUser
-Update-InfrastructureVersion `
-    -infraToolsFunctionName "$Env:IaC_EXCLUSIVE_INFRATOOLSFUNCTIONNAME" `
-    -infraToolsTableName "$Env:IAC_INFRATABLENAME" `
-    -deploymentStage "$Env:IAC_DEPLOYMENTSTAGE"
