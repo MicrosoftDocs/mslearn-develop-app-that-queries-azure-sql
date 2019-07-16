@@ -153,7 +153,7 @@ function 1_Up {
     Write-Output "creating web app..."
     az webapp create `
         --name $webAppName `
-        --plan "$webAppName" + "plan" `
+        --plan $("$webAppName" + "plan") `
         --resource-group $resourceGroupName
     Write-Output "done creating web app"
 }
