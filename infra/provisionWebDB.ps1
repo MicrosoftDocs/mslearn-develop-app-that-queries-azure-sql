@@ -52,7 +52,7 @@ param(
     $dbName,
 
     [Parameter(Mandatory = $True)]
-    [strinig]
+    [string]
     $dbEdition,
 
     [Parameter(Mandatory = $True)]
