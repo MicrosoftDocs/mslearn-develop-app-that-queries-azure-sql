@@ -101,7 +101,7 @@ Write-Output "Done"
 Write-Output ""
 #endregion
 
-function 1_Up {
+
     # Create a resource group
     Write-Output "Creating resource group..."
     az group create `
@@ -111,27 +111,39 @@ function 1_Up {
 
     # Create a logical server in the resource group
     Write-Output "Creating sql server..."
-    az sql server create `
+    try {
+        az sql server create `
         --name $servername `
         --resource-group $resourceGroupName `
         --location $location  `
         --admin-user $adminlogin `
         --admin-password $adminPassword
+    }
+    catch {
+        Write-Output "SQL Server already exists"
+    }
     Write-Output "Done creating sql server"
 
     # Configure a firewall rule for the server
     Write-Output "Creating firewall rule for sql server..."
-    az sql server firewall-rule create `
+    try {
+        az sql server firewall-rule create `
         --resource-group $resourceGroupName `
         --server $servername `
         -n AllowYourIp `
         --start-ip-address $startip `
-        --end-ip-address $endip `
+        --end-ip-address $endip 
+    }
+    catch {
+        Write-Output "firewall rule already exists"
+    }
+
     Write-Output "Done creating firewall rule for sql server"
 
     # Create a database in the server with zone redundancy as false
     Write-Output "Create sql db $dbName..."
-    az sql db create `
+    try {
+        az sql db create `
         --resource-group $resourceGroupName `
         --server $servername `
         --name $dbName `
@@ -139,27 +151,61 @@ function 1_Up {
         --family $dbFamily `
         --capacity $dbCapacity `
         --zone-redundant $dbZoneRedundant
+    }
+    catch {
+        Write-Output "sql db already exists"
+    }
+    
     Write-Output "Done creating sql db"
      
     # create app service plan
     #
     Write-Output "creating app service plan..."
-    az appservice plan create `
+    try {
+        az appservice plan create `
         --name $("$webAppName" + "plan") `
         --resource-group $resourceGroupName `
         --sku $webAppSku
+    }
+    catch {
+        Write-Output "app service already exists."
+    }
     Write-Output "done creating app service plan"
     
     Write-Output "creating web app..."
-    az webapp create `
+    try {
+        az webapp create `
         --name $webAppName `
         --plan $("$webAppName" + "plan") `
         --resource-group $resourceGroupName
-    Write-Output "done creating web app"
-}
 
-Install-Module -Name VersionInfrastructure -Force -Scope CurrentUser
-Update-InfrastructureVersion `
-    -infraToolsFunctionName "$Env:IaC_EXCLUSIVE_INFRATOOLSFUNCTIONNAME" `
-    -infraToolsTableName "$Env:IAC_INFRATABLENAME" `
-    -deploymentStage "$Env:IAC_DEPLOYMENTSTAGE"
+    }
+    catch {
+        Write-Output "web app already exists"
+    }
+    Write-Output "done creating web app"
+
+    Write-Output "Setting connection string.."
+    az webapp config connection-string set `
+        --name $webAppName `
+        --connection-string-type "SQLAzure" `
+        --resource-group $resourceGroupName `
+        --settings connectionString="Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+
+    Write-Output "Done setting connection string"
+
+    Write-Output "creating db tables"
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Courses' and xtype='U') CREATE TABLE Courses ( CourseID INT NOT NULL PRIMARY KEY, CourseName VARCHAR(50) NOT NULL );"
+    
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Modules' and xtype='U') CREATE TABLE Modules ( ModuleCode VARCHAR(5) NOT NULL PRIMARY KEY, ModuleTitle VARCHAR(50) NOT NULL );"
+
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='StudyPlans' and xtype='U') CREATE TABLE StudyPlans ( CourseID INT NOT NULL, ModuleCode VARCHAR(5) NOT NULL, ModuleSequence INT NOT NULL, PRIMARY KEY ( CourseID, ModuleCode) );"
+
+    Invoke-Sqlcmd 
+    Write-Output "done creating db tables"
