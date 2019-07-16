@@ -197,12 +197,9 @@ Write-Output ""
     Write-Output "creating db tables"
     # Create tables
     sqlcmd -S "$($servername).database.windows.net" -d $($dbName) -U $adminlogin -P $adminPassword
-    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Courses' and xtype='U')
-        CREATE TABLE Courses ( CourseID INT NOT NULL PRIMARY KEY, CourseName VARCHAR(50) NOT NULL );
-    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Modules' and xtype='U')
-        CREATE TABLE Modules ( ModuleCode VARCHAR(5) NOT NULL PRIMARY KEY, ModuleTitle VARCHAR(50) NOT NULL );
-    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='StudyPlans' and xtype='U')
-        CREATE TABLE StudyPlans ( CourseID INT NOT NULL, ModuleCode VARCHAR(5) NOT NULL, ModuleSequence INT NOT NULL, PRIMARY KEY ( CourseID, ModuleCode) );
+    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Courses' and xtype='U') CREATE TABLE Courses ( CourseID INT NOT NULL PRIMARY KEY, CourseName VARCHAR(50) NOT NULL );
+    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Modules' and xtype='U') CREATE TABLE Modules ( ModuleCode VARCHAR(5) NOT NULL PRIMARY KEY, ModuleTitle VARCHAR(50) NOT NULL );
+    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='StudyPlans' and xtype='U') CREATE TABLE StudyPlans ( CourseID INT NOT NULL, ModuleCode VARCHAR(5) NOT NULL, ModuleSequence INT NOT NULL, PRIMARY KEY ( CourseID, ModuleCode) );
     GO
     EXIT
     Write-Output "done creating db tables"
