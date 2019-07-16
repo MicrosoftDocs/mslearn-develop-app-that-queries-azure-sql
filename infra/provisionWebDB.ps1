@@ -126,7 +126,7 @@ Write-Output ""
         --server $servername `
         -n AllowYourIp `
         --start-ip-address $startip `
-        --end-ip-address $endip `
+        --end-ip-address $endip 
     Write-Output "Done creating firewall rule for sql server"
 
     # Create a database in the server with zone redundancy as false
