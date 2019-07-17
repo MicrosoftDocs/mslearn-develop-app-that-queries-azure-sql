@@ -212,13 +212,10 @@ Write-Output ""
     
     Write-Output "done creating db tables"
 
-    Write-Output "loading data for courses..."
-    Invoke-Sqlcmd `
-    -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-    -Query "IF NOT EXISTS (SELECT * FROM Courses) BULK INSERT Courses FROM 'D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv' WITH (FORMAT = 'CSV', FIRSTROW=2, FIELDTERMINATOR = ',', ROWTERMINATOR = '\n');" 
-    Write-Output "done loading data"
+    # Write-Output "loading data for courses..."
+    # Invoke-Sqlcmd `
+    # -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+    # -Query "IF NOT EXISTS (SELECT * FROM Courses) BULK INSERT Courses FROM 'D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv' WITH (FORMAT = 'CSV', FIRSTROW=2, FIELDTERMINATOR = ',', ROWTERMINATOR = '\n');" 
+    # Write-Output "done loading data"
 
-
-
-    D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv
-    D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv
+    bcp "$dbName.dbo.courses" in "D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv" -S "$servername.database.windows.net" -U abel -P g83P@BxDXma700000 -F 2
