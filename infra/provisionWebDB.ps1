@@ -222,8 +222,8 @@ Write-Output ""
 
     Write-Output "loading data for courses..."
     $sqlConnection = new-object ('System.Data.SqlClient.SqlConnection') "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=learndb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-    $serverConnection =  new-object ('Microsoft.SqlServer.Management.Common.ServerConnection') $sqlConnection
-    $server = new-object ('Microsoft.SqlServer.Management.Smo.Server') $serverConnection
+    #$serverConnection =  new-object ('Microsoft.SqlServer.Management.Common.ServerConnection') $sqlConnection
+    $server = new-object ('Microsoft.SqlServer.Management.Smo.Server') #$serverConnection
     $db = $server.Databases["learndb"]
     $table = $db.Tables["Courses"]
     ,(Import-Csv -Path "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.csv" -Header "ID","Course") | Write-SqlTableData -InputObject $table
