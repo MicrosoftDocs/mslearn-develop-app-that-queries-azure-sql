@@ -73,8 +73,11 @@ param(
 
     [Parameter(Mandatory = $True)]
     [string]
-    $webAppSku
+    $webAppSku,
 
+    [Parameter(Mandatory = $True)]
+    [string]
+    $releaseDirectory
 )
 
 
@@ -206,6 +209,15 @@ Write-Output ""
     Invoke-Sqlcmd `
         -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
         -Query "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='StudyPlans' and xtype='U') CREATE TABLE StudyPlans ( CourseID INT NOT NULL, ModuleCode VARCHAR(5) NOT NULL, ModuleSequence INT NOT NULL, PRIMARY KEY ( CourseID, ModuleCode) );"
-
-    Invoke-Sqlcmd 
+    
     Write-Output "done creating db tables"
+
+    Write-Output "loading data..."
+    Invoke-Sqlcmd `
+    -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+    -Query "BULK INSERT Sales.Invoices FROM '$releaseDirectory\_LearnDB-ASP.NET Core-CI\drop\courses.csv' WITH (FORMAT = 'CSV', FIRSTROW=2, FIELDTERMINATOR = ',', ROWTERMINATOR = '\n');" 
+
+
+
+
+   
