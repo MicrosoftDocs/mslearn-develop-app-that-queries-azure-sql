@@ -218,4 +218,6 @@ Write-Output ""
     # -Query "IF NOT EXISTS (SELECT * FROM Courses) BULK INSERT Courses FROM 'D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv' WITH (FORMAT = 'CSV', FIRSTROW=2, FIELDTERMINATOR = ',', ROWTERMINATOR = '\n');" 
     # Write-Output "done loading data"
 
-    bcp "$dbName.dbo.courses" in "D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv" -S "$servername.database.windows.net" -U abel -P g83P@BxDXma700000 -F 2
+    #bcp "$dbName.dbo.courses" in "D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv" -S "$servername.database.windows.net" -U abel -P g83P@BxDXma700000 -F 2
+
+    ,(Import-Csv -Path "D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv" -Header "ID","Course") | Write-SqlTableData -ServerInstance "$servername.database.windows.net" -DatabaseName "$dbName" -SchemaName "dbo" -TableName "Course" -Force
