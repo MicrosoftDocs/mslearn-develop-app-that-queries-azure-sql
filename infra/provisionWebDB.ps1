@@ -212,11 +212,11 @@ Write-Output ""
     
     Write-Output "done creating db tables"
 
-    Write-Output "loading data..."
+    Write-Output "loading data for courses..."
     Invoke-Sqlcmd `
     -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-    -Query "BULK INSERT Sales.Invoices FROM '$releaseDirectory\_LearnDB-ASP.NET Core-CI\drop\courses.csv' WITH (FORMAT = 'CSV', FIRSTROW=2, FIELDTERMINATOR = ',', ROWTERMINATOR = '\n');" 
-
+    -Query "BULK INSERT Courses FROM '$releaseDirectory\_LearnDB-ASP.NET Core-CI\drop\courses.csv' WITH (FORMAT = 'CSV', FIRSTROW=2, FIELDTERMINATOR = ',', ROWTERMINATOR = '\n');" 
+    Write-Output "done loading data"
 
 
 
