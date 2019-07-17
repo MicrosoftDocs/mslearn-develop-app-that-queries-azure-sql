@@ -220,17 +220,17 @@ Write-Output ""
 
     #bcp "$dbName.dbo.courses" in "D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv" -S "$servername.database.windows.net" -U abel -P g83P@BxDXma700000 -F 2
 
-    # ,(Import-Csv -Path "D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv" -Header "ID","Course") | Write-SqlTableData -ServerInstance "$servername.database.windows.net" -DatabaseName "$dbName" -SchemaName "dbo" -TableName "Course" -Force
-    # $sqlConnection = new-object ('System.Data.SqlClient.SqlConnection') "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=learndb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-    # $serverConnection =  new-object ('Microsoft.SqlServer.Management.Common.ServerConnection') $sqlConnection
-    # $server = new-object ('Microsoft.SqlServer.Management.Smo.Server') $serverConnection
-    # $db = $server.Databases["learndb"]
-    # $table = $db.Tables["Courses"]
-    
-    # ,(Import-Csv -Path "D:\a\r1\a\_LearnDB-ASP.NET Core-CI\drop\courses.csv" -Header "ID","Course") | Write-SqlTableData -InputObject $table
-
     Write-Output "loading data for courses..."
-    Invoke-Sqlcmd `
-    -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-    -Query "BULK INSERT Courses FROM 'D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.csv' WITH (FORMAT = 'CSV', FIRSTROW=2, FIELDTERMINATOR = ',', ROWTERMINATOR = '\n');" 
-    Write-Output "done loading data"
+    $sqlConnection = new-object ('System.Data.SqlClient.SqlConnection') "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=learndb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+    $serverConnection =  new-object ('Microsoft.SqlServer.Management.Common.ServerConnection') $sqlConnection
+    $server = new-object ('Microsoft.SqlServer.Management.Smo.Server') $serverConnection
+    $db = $server.Databases["learndb"]
+    $table = $db.Tables["Courses"]
+    ,(Import-Csv -Path "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.csv" -Header "ID","Course") | Write-SqlTableData -InputObject $table
+    Write-Output "done loading data for courses"
+
+    # Write-Output "loading data for courses..."
+    # Invoke-Sqlcmd `
+    # -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+    # -Query "BULK INSERT Courses FROM 'D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.csv' WITH (FORMAT = 'CSV', FIRSTROW=2, FIELDTERMINATOR = ',', ROWTERMINATOR = '\n');" 
+    # Write-Output "done loading data"
