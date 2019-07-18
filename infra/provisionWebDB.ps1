@@ -253,3 +253,7 @@ Write-Output ""
     Write-Output "installing sql server command line tools via chocolatey"
     cinst sqlserver-cmdlineutils
     Write-Output "done installing sql server command line tools"
+
+    Write-Output "calling bcp"
+    bcp
+    Write-Output
