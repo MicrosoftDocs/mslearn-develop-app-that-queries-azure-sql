@@ -259,5 +259,5 @@ Write-Output ""
     Write-Output "done refreshing environment"
 
     Write-Output "calling bcp..."
-    bcp
+    & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\bcp"
     Write-Output "done calling bcp"
