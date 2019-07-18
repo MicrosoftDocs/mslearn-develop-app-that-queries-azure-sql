@@ -250,10 +250,14 @@ Write-Output ""
     # $Tables = $DataSet.Tables
 
 
-    Write-Output "installing sql server command line tools via chocolatey"
+    Write-Output "installing sql server command line tools via chocolatey..."
     cinst sqlserver-cmdlineutils
     Write-Output "done installing sql server command line tools"
 
-    Write-Output "calling bcp"
+    Write-Output "refreshing environment..."
+    refreshenv
+    Write-Output "done refreshing environment"
+
+    Write-Output "calling bcp..."
     bcp
-    Write-Output
+    Write-Output "done calling bcp"
