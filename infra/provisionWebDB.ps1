@@ -259,5 +259,5 @@ Write-Output ""
     Write-Output "done refreshing environment"
 
     Write-Output "calling bcp..."
-    & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\bcp"
+    & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\bcp learndb.dbo.courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.csv -S abellearndbserver1.database.windows.net -U abel -P g83P@BxDXma7 -F 2"
     Write-Output "done calling bcp"
