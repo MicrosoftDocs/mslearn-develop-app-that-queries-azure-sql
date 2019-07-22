@@ -270,7 +270,7 @@ Write-Output ""
     ls
     cd "170"
     ls
-    cd Tool
+    cd "Tools"
     ls
 
     Write-Output "Checking data for Courses..."
