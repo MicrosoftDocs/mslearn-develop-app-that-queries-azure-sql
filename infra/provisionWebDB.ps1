@@ -258,6 +258,21 @@ Write-Output ""
     refreshenv
     Write-Output "done refreshing environment"
 
+    cd C:\
+    ls
+    cd "Program Files"
+    ls
+    cd "Microsoft SQL Server"
+    ls
+    cd "Client SDK"
+    ls
+    cd "ODBC"
+    ls
+    cd "130"
+    ls
+    cd Tool
+    ls
+
     Write-Output "Checking data for Courses..."
     $numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=learndb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" -Query "SELECT Count(*) FROM Courses")
     if ($numRows.Column1 -eq 0) {
