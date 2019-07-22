@@ -284,11 +284,19 @@ Write-Output ""
 # Write-Output "refreshing environment..."
 # refreshenv
 # Write-Output "done refreshing environment"
+
+# Create storage account container
+#
 Write-Output "Creating storage container for uploading data..."
+#az storage container create --name uploaddata --public-access container --account-name abellearndbstorage
 az storage container create `
     --name $storageContainerName `
-    --public-access container
+    --public-access container `
+    --account-name $webStorageAccountName
+
+
 Write-Output "Done creating data for uploading data"
+
 
 Write-Output "Checking data for Courses..."
 $numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=learndb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" -Query "SELECT Count(*) FROM Courses")
