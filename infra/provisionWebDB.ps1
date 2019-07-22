@@ -268,7 +268,7 @@ Write-Output ""
     ls
     cd "ODBC"
     ls
-    cd "150"
+    cd "170"
     ls
     cd Tool
     ls
