@@ -77,9 +77,20 @@ param(
 
     [Parameter(Mandatory = $True)]
     [string]
-    $releaseDirectory
-)
+    $releaseDirectory,
 
+    [Parameter(Mandatory = $True)]
+    [string]
+    $webStorageAccountName,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $webStorageAccountRegion,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $webStorageAccountSku
+)
 
 #region Login
 
