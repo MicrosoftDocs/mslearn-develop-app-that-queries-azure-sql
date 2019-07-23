@@ -173,7 +173,7 @@ function Upload-DefaultData {
     Write-Output "bulk inserting $dbTable..."
     Invoke-Sqlcmd `
         -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "BULK INSERT $dbTable FROM '$containerAndFile' WITH (DATA_SOURCE = 'MyExternalSource', FORMAT = 'CSV', FirstRow=2);"
+        -Query "BULK INSERT $dbTable FROM '$containerAndFile' WITH (DATA_SOURCE = 'MyCourses', FORMAT = 'CSV', FirstRow=2);"
     Write-Output "Done Bulk inserting $dbTable"
 
 
