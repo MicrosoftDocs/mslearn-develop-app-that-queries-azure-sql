@@ -329,6 +329,12 @@ if ($numRows.Column1 -eq 0) {
     # # & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -c -t "," -F 2
     # & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -c -F 2 -f D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.fmt
     
+    Write-Output "creating database master key..."
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "CREATE MASTER KEY ENCRYPTION BY PASSWORD = '23987hxJ#KL95234nl0zBe'" 
+    Write-Output "Done creating database master key"
+
     Write-Output "creating database scoped credential..."
     Invoke-Sqlcmd `
         -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
