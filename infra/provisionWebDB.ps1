@@ -270,12 +270,10 @@ Write-Output "done refreshing environment"
 # Uploading default data for Courses
 #
 Write-Output "Checking data for Courses..."
-$numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=learndb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" -Query "SELECT Count(*) FROM Courses")
+$numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:$servername.database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" -Query "SELECT Count(*) FROM Courses")
 if ($numRows.Column1 -eq 0) {
     Write-Output "No data for Courses, loading default data..."
-    #& "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -c -t "," -F 2
-    & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses4.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -c -t "," -F 2    
-    
+    & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" $($dbName).dbo.Courses in $releaseDirectory\_LearnDB-ASP.NETCore-CI\drop\courses4.txt -S $($servername).database.windows.net -U "$adminLogin" -P "$adminPassword" -q -c -t "," -F 2
 }
 
 else {
