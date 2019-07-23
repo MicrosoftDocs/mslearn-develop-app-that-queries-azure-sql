@@ -392,6 +392,8 @@ $keylist = $(az storage account keys list --account-name abellearndbstorage --re
 $storageKey = $keylist[0].value
 Write-Output "Finished getting key for storage"
 
+# Upload default data csv files to blob storage
+#
 Write-Output "Getting context for blob storage container..."
 $Ctx = New-AzureStorageContext -StorageAccountName $webStorageAccountName -StorageAccountKey $storageKey
 Write-Output "Done gettint context for blog storage container"
@@ -427,6 +429,7 @@ Set-AzureStorageBlobContent `
 Write-Output "Done uploading the file"
 #endregion
 
+# region Uploading default data for tables
 # Uploading default data for Courses
 #
 Write-Output "Checking data for Courses..."
@@ -468,5 +471,5 @@ else {
     Write-Output "Data already exists for Courses"
 }    
 Write-Output "done checking data for Courses"
-
+#endregion
 
