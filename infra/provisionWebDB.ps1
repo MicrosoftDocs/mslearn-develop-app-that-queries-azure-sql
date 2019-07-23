@@ -164,11 +164,11 @@ function Upload-DefaultData {
         -Query "CREATE EXTERNAL DATA SOURCE MyExternalSource WITH  (TYPE = BLOB_STORAGE, LOCATION = 'https://$storageAccountName.blob.core.windows.net', CREDENTIAL = UploadDefaultData );"
     Write-Output "Done creating database external data source"
     
-    Write-Output "selecting openrowset..."
-    Invoke-Sqlcmd `
-        -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "SELECT * FROM OPENROWSET(BULK '$containerAndFile', DATA_SOURCE = 'MyExternalSource', SINGLE_CLOB) AS DataFile;"
-    Write-Output "Done selecitn openrowset"
+    # Write-Output "selecting openrowset..."
+    # Invoke-Sqlcmd `
+    #     -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+    #     -Query "SELECT * FROM OPENROWSET(BULK '$containerAndFile', DATA_SOURCE = 'MyExternalSource', SINGLE_CLOB) AS DataFile;"
+    # Write-Output "Done selecitn openrowset"
 
     Write-Output "bulk inserting $dbTable..."
     Invoke-Sqlcmd `
@@ -378,6 +378,7 @@ az storage container create `
     --account-name $webStorageAccountName
 Write-Output "Done creating data for uploading data"
 
+#region Upload data files to storage
 # Upload data files to storage
 #
 Write-Output "Getting key for storage..."
@@ -398,6 +399,13 @@ Set-AzureStorageBlobContent `
     -Force
 
 Set-AzureStorageBlobContent `
+    -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses4.txt" `
+    -Container $storageContainerName `
+    -Blob "courses.txt" `
+    -Context $Ctx `
+    -Force
+
+Set-AzureStorageBlobContent `
     -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\modules.txt" `
     -Container $storageContainerName `
     -Blob "modules.txt" `
@@ -411,6 +419,7 @@ Set-AzureStorageBlobContent `
     -Context $Ctx `
     -Force
 Write-Output "Done uploading the file"
+#endregion
 
 # Uploading default data for Courses
 #
