@@ -299,11 +299,17 @@ Write-Output "Done creating data for uploading data"
  
 # upload csv file for course
 #
+Write-Output "Selecting current azure subscription..."
+Select-AzureSubscription `
+    -Current `
+    -SubscriptionName $azureSubscriptionName
+Write-Output "Done selecting current azure subscription"
+
 Write-Output "Getting context for blob storage container..."
-Select-AzureSubscription -Default 
 $StorageAccountKey = Get-AzureStorageKey -StorageAccountName $webStorageAccountName
 $Ctx = New-AzureStorageContext $webStorageAccountName -StorageAccountKey $StorageAccountKey.Primary
 Write-Output "Done gettint context for blog storage container"
+
 Write-Output "Upload the file using the context..."
 Set-AzureStorageBlobContent `
     -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt" `
