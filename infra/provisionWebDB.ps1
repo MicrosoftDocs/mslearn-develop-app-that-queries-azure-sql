@@ -167,7 +167,7 @@ function Upload-DefaultData {
     Write-Output "calling GO..."
     Invoke-Sqlcmd `
         -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "GO;"
+        -Query "SELECT * FROM COURSES;"
     Write-Output "Done calling GO"
     
     # Write-Output "selecting openrowset..."
