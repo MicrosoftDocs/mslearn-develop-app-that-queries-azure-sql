@@ -30,7 +30,6 @@ BEGIN TRY
         LOCATION = 'https://abellearndbstorage.blob.core.windows.net', 
         CREDENTIAL = UploadDefaultDataCred
     );
-    GO
 END TRY
 BEGIN CATCH
     PRINT N'MyCourses external data source already exists';
