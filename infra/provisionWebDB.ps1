@@ -329,6 +329,30 @@ if ($numRows.Column1 -eq 0) {
     # # & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -c -t "," -F 2
     # & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -c -F 2 -f D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.fmt
     
+    Write-Output "creating database scoped credential..."
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "CREATE DATABASE SCOPED CREDENTIAL UploadDefaultData WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'DyGv1v7cAtA=='" 
+    Write-Output "Done creating database scoped credential"
+
+    Write-Output "creating eternal data source..."
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "CREATE EXTERNAL DATA SOURCE MyCourses WITH  (TYPE = BLOB_STORAGE, LOCATION = 'https://abellearndbstorage.blob.core.windows.net', CREDENTIAL = UploadDefaultData );"
+    Write-Output "Done creating database external data source"
+    
+    Write-Output "selecting openrowset..."
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "SELECT * FROM OPENROWSET(BULK  'uploaddata/courses4.txt', DATA_SOURCE = 'MyCourses', SINGLE_CLOB) AS DataFile;"
+    Write-Output "Done selecitn openrowset"
+
+    Write-Output "bulk inserting Courses..."
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "BULK INSERT Courses FROM 'uploaddata/courses4.txt' WITH (DATA_SOURCE = 'MyCourses', FORMAT = 'CSV', FirstRow=2);"
+    Write-Output "Done Bulk inserting Courses"
+
     Write-Output  "done loading data for Courses"
 }
 
