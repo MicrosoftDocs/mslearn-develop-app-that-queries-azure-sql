@@ -367,67 +367,67 @@ Write-Output ""
 # $Tables = $DataSet.Tables
 
 
-# Write-Output "installing sql server command line tools via chocolatey..."
-# cinst sqlserver-cmdlineutils
-# Write-Output "done installing sql server command line tools"
+Write-Output "installing sql server command line tools via chocolatey..."
+cinst sqlserver-cmdlineutils
+Write-Output "done installing sql server command line tools"
 
-# Write-Output "refreshing environment..."
-# refreshenv
-# Write-Output "done refreshing environment"
+Write-Output "refreshing environment..."
+refreshenv
+Write-Output "done refreshing environment"
 
 # Create storage account container
-#
-Write-Output "Creating storage container for uploading data..."
-az storage container create `
-    --name $storageContainerName `
-    --public-access container `
-    --account-name $webStorageAccountName
-Write-Output "Done creating data for uploading data"
 
-#region Upload data files to storage
+# Write-Output "Creating storage container for uploading data..."
+# az storage container create `
+#     --name $storageContainerName `
+#     --public-access container `
+#     --account-name $webStorageAccountName
+# Write-Output "Done creating data for uploading data"
+
+# region Upload data files to storage
 # Upload data files to storage
-#
-Write-Output "Getting key for storage..."
-$keylist = $(az storage account keys list --account-name abellearndbstorage --resource-group abellearndbrg) | ConvertFrom-Json
-$storageKey = $keylist[0].value
-Write-Output "Finished getting key for storage"
+
+# Write-Output "Getting key for storage..."
+# $keylist = $(az storage account keys list --account-name abellearndbstorage --resource-group abellearndbrg) | ConvertFrom-Json
+# $storageKey = $keylist[0].value
+# Write-Output "Finished getting key for storage"
 
 # Upload default data csv files to blob storage
-#
-Write-Output "Getting context for blob storage container..."
-$Ctx = New-AzureStorageContext -StorageAccountName $webStorageAccountName -StorageAccountKey $storageKey
-Write-Output "Done gettint context for blog storage container"
 
-Write-Output "Upload the file using the context..."
-Set-AzureStorageBlobContent `
-    -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt" `
-    -Container $storageContainerName `
-    -Blob "courses.txt" `
-    -Context $Ctx `
-    -Force
+# Write-Output "Getting context for blob storage container..."
+# $Ctx = New-AzureStorageContext -StorageAccountName $webStorageAccountName -StorageAccountKey $storageKey
+# Write-Output "Done gettint context for blog storage container"
 
-Set-AzureStorageBlobContent `
-    -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses4.txt" `
-    -Container $storageContainerName `
-    -Blob "courses.txt" `
-    -Context $Ctx `
-    -Force
+# Write-Output "Upload the file using the context..."
+# Set-AzureStorageBlobContent `
+#     -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt" `
+#     -Container $storageContainerName `
+#     -Blob "courses.txt" `
+#     -Context $Ctx `
+#     -Force
 
-Set-AzureStorageBlobContent `
-    -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\modules.txt" `
-    -Container $storageContainerName `
-    -Blob "modules.txt" `
-    -Context $Ctx `
-    -Force
+# Set-AzureStorageBlobContent `
+#     -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses4.txt" `
+#     -Container $storageContainerName `
+#     -Blob "courses.txt" `
+#     -Context $Ctx `
+#     -Force
 
-Set-AzureStorageBlobContent `
-    -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\studyplans.txt" `
-    -Container $storageContainerName `
-    -Blob "studyplans.txt" `
-    -Context $Ctx `
-    -Force
-Write-Output "Done uploading the file"
-#endregion
+# Set-AzureStorageBlobContent `
+#     -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\modules.txt" `
+#     -Container $storageContainerName `
+#     -Blob "modules.txt" `
+#     -Context $Ctx `
+#     -Force
+
+# Set-AzureStorageBlobContent `
+#     -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\studyplans.txt" `
+#     -Container $storageContainerName `
+#     -Blob "studyplans.txt" `
+#     -Context $Ctx `
+#     -Force
+# Write-Output "Done uploading the file"
+# endregion
 
 # region Uploading default data for tables
 # Uploading default data for Courses
@@ -436,35 +436,36 @@ Write-Output "Checking data for Courses..."
 $numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=learndb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" -Query "SELECT Count(*) FROM Courses")
 if ($numRows.Column1 -eq 0) {
     Write-Output "No data for Courses, loading default data..."
-    # # & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -c -t "," -F 2
-    # & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -c -F 2 -f D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.fmt
-    Upload-DefaultData `
-        -databaseServerName $servername `
-        -databaseName $dbName `
-        -databaseUser $adminLogin `
-        -databasePassword $adminPassword `
-        -storageAccountName $webStorageAccountName `
-        -containerAndFile $storageContainerName+"/courses4.txt" `
-        -dbTable "Courses"
+    #& "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -c -t "," -F 2
+    & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -F 2 -f D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.fmt
+    
+    # Upload-DefaultData `
+    #     -databaseServerName $servername `
+    #     -databaseName $dbName `
+    #     -databaseUser $adminLogin `
+    #     -databasePassword $adminPassword `
+    #     -storageAccountName $webStorageAccountName `
+    #     -containerAndFile $storageContainerName+"/courses4.txt" `
+    #     -dbTable "Courses"
 
-    Upload-DefaultData `
-        -databaseServerName $servername `
-        -databaseName $dbName `
-        -databaseUser $adminLogin `
-        -databasePassword $adminPassword `
-        -storageAccountName $webStorageAccountName `
-        -containerAndFile $storageContainerName+"/modules.txt" `
-        -dbTable "Modules"
+    # Upload-DefaultData `
+    #     -databaseServerName $servername `
+    #     -databaseName $dbName `
+    #     -databaseUser $adminLogin `
+    #     -databasePassword $adminPassword `
+    #     -storageAccountName $webStorageAccountName `
+    #     -containerAndFile $storageContainerName+"/modules.txt" `
+    #     -dbTable "Modules"
 
-    Upload-DefaultData `
-        -databaseServerName $servername `
-        -databaseName $dbName `
-        -databaseUser $adminLogin `
-        -databasePassword $adminPassword `
-        -storageAccountName $webStorageAccountName `
-        -containerAndFile $storageContainerName+"/studyplans.txt" `
-        -dbTable "Modules"
-    Write-Output  "done loading data for $containerAndFile"
+    # Upload-DefaultData `
+    #     -databaseServerName $servername `
+    #     -databaseName $dbName `
+    #     -databaseUser $adminLogin `
+    #     -databasePassword $adminPassword `
+    #     -storageAccountName $webStorageAccountName `
+    #     -containerAndFile $storageContainerName+"/studyplans.txt" `
+    #     -dbTable "Modules"
+    # Write-Output  "done loading data for $containerAndFile"
 }
 
 else {
