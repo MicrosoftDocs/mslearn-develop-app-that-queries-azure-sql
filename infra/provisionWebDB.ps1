@@ -426,7 +426,7 @@ if ($numRows.Column1 -eq 0) {
         -databaseUser $adminLogin `
         -databasePassword $adminPassword `
         -storageAccountName $webStorageAccountName `
-        -containerAndFile $storageContainerName+"/courses.txt" `
+        -containerAndFile $storageContainerName+"/courses4.txt" `
         -dbTable "Courses"
 
     Upload-DefaultData `
