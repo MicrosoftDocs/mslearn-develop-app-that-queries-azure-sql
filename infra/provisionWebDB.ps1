@@ -333,41 +333,98 @@ if ($numRows.Column1 -eq 0) {
     Write-Output "No data for Courses, loading default data..."
     # # & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -c -t "," -F 2
     # & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" learndb.dbo.Courses in D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.txt -S abellearndbserver1.database.windows.net -U "abel@abellearndbserver1" -P "g83P@BxDXma700000" -q -c -F 2 -f D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\courses.fmt
+    Upload-DefaultData `
+        -databaseServerName $servername `
+        -databaseName $dbName `
+        -databaseUser $adminLogin `
+        -databasePassword $adminPassword `
+        -storageAccountName $webStorageAccountName `
+        -containerAndFile $storageContainerName+"/courses.txt"
+
     
-    Write-Output "creating database master key..."
-    Invoke-Sqlcmd `
-        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "CREATE MASTER KEY ENCRYPTION BY PASSWORD = '23987hxJ#KL95234nl0zBe'" 
-    Write-Output "Done creating database master key"
-
-    Write-Output "creating database scoped credential..."
-    Invoke-Sqlcmd `
-        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "CREATE DATABASE SCOPED CREDENTIAL UploadDefaultData WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'DyGv1v7cAtA=='" 
-    Write-Output "Done creating database scoped credential"
-
-    Write-Output "creating eternal data source..."
-    Invoke-Sqlcmd `
-        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "CREATE EXTERNAL DATA SOURCE MyCourses WITH  (TYPE = BLOB_STORAGE, LOCATION = 'https://abellearndbstorage.blob.core.windows.net', CREDENTIAL = UploadDefaultData );"
-    Write-Output "Done creating database external data source"
-    
-    Write-Output "selecting openrowset..."
-    Invoke-Sqlcmd `
-        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "SELECT * FROM OPENROWSET(BULK  'uploaddata/courses.txt', DATA_SOURCE = 'MyCourses', SINGLE_CLOB) AS DataFile;"
-    Write-Output "Done selecitn openrowset"
-
-    Write-Output "bulk inserting Courses..."
-    Invoke-Sqlcmd `
-        -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "BULK INSERT Courses FROM 'uploaddata/courses.txt' WITH (DATA_SOURCE = 'MyCourses', FORMAT = 'CSV', FirstRow=2);"
-    Write-Output "Done Bulk inserting Courses"
-
-    Write-Output  "done loading data for Courses"
 }
 
 else {
     Write-Output "Data already exists for Courses"
 }    
 Write-Output "done checking data for Courses"
+
+
+function Upload-DefaultData {
+    param(
+        [Parameter(Mandatory = $True)]
+        [string]
+        $databaseServerName,
+
+        [Parameter(Mandatory = $True)]
+        [string]
+        $databaseName,
+
+        [Parameter(Mandatory = $True)]
+        [string]
+        $databaseUser,
+
+        [Parameter(Mandatory = $True)]
+        [string]
+        $databasePassword,
+
+        [Parameter(Mandatory = $True)]
+        [string]
+        $storageAccountName,
+
+        [Parameter(Mandatory = $True)]
+        [string]
+        $containerAndFile
+    )
+    
+    Write-Output "creating database master key..."
+    try {
+        Invoke-Sqlcmd `
+            -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+            -Query "CREATE MASTER KEY ENCRYPTION BY PASSWORD = '23987hxJ#KL95234nl0zBe'" 
+    }
+    catch {
+        Write-Output "Master Key already exists"
+    }
+    Write-Output "Done creating database master key"
+    
+    Write-Output "creating database scoped credential..."
+    try {
+        Invoke-Sqlcmd `
+            -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+            -Query "CREATE DATABASE SCOPED CREDENTIAL UploadDefaultData WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'DyGv1v7cAtA=='" 
+    }
+    catch {
+        Write-Output "scoped credential already exists"
+    }
+    Write-Output "Done creating database scoped credential"
+
+
+    Write-Output "creating external data source..."
+    try {
+        Invoke-Sqlcmd `
+            -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+            -Query "Drop External Data Source MyExternalSource"
+    }
+    catch {
+        Write-Output "MyExternalSource does not exists in the DB"
+    }
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "CREATE EXTERNAL DATA SOURCE MyExternalSource WITH  (TYPE = BLOB_STORAGE, LOCATION = 'https://$storageAccountName.blob.core.windows.net', CREDENTIAL = UploadDefaultData );"
+    Write-Output "Done creating database external data source"
+    
+    Write-Output "selecting openrowset..."
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "SELECT * FROM OPENROWSET(BULK '$containerAndFile', DATA_SOURCE = 'MyExternalSource', SINGLE_CLOB) AS DataFile;"
+    Write-Output "Done selecitn openrowset"
+
+    Write-Output "bulk inserting $containerAndFile..."
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "BULK INSERT Courses FROM '$containerAndFile' WITH (DATA_SOURCE = 'MyExternalSource', FORMAT = 'CSV', FirstRow=2);"
+    Write-Output "Done Bulk inserting Courses"
+
+    Write-Output  "done loading data for $containerAndFile"
+}
