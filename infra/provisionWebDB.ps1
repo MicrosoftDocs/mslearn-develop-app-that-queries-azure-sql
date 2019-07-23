@@ -299,15 +299,16 @@ Write-Output "Done creating data for uploading data"
  
 # upload csv file for course
 #
-Write-Output "Selecting current azure subscription..."
-Select-AzureSubscription `
-    -Current `
-    -SubscriptionName $azureSubscriptionName
-Write-Output "Done selecting current azure subscription"
+# Write-Output "Selecting current azure subscription..."
+# Select-AzureSubscription `
+#     -Current `
+#     #-SubscriptionName $azureSubscriptionName
+#     -SubscritpionId "e97f6c4e-c830-479b-81ad-1aff1dd07470"
+# Write-Output "Done selecting current azure subscription"
 
 Write-Output "Getting context for blob storage container..."
-$StorageAccountKey = Get-AzureStorageKey -StorageAccountName $webStorageAccountName
-$Ctx = New-AzureStorageContext $webStorageAccountName -StorageAccountKey $StorageAccountKey.Primary
+# $StorageAccountKey = Get-AzureStorageKey -StorageAccountName $webStorageAccountName
+$Ctx = New-AzureStorageContext -StorageAccountName $webStorageAccountName -StorageAccountKey "D+dEX8LjmnX4/NnUrx/NtWCdTBaHLZpSBLQvUW8KsJifLOYQeOTsUzjjgIfftHvnEETQ0RtZULVrsBXznuLD2g=="
 Write-Output "Done gettint context for blog storage container"
 
 Write-Output "Upload the file using the context..."
