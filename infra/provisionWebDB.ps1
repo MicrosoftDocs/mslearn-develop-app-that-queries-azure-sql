@@ -173,7 +173,7 @@ function Upload-DefaultData {
     # Write-Output "selecting openrowset..."
     # Invoke-Sqlcmd `
     #     -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-    #     -Query "SELECT * FROM OPENROWSET(BULK '$containerAndFile', DATA_SOURCE = 'MyExternalSource', SINGLE_CLOB) AS DataFile;"
+    #     -Query "SELECT * FROM OPENROWSEgT(BULK '$containerAndFile', DATA_SOURCE = 'MyExternalSource', SINGLE_CLOB) AS DataFile;"
     # Write-Output "Done selecitn openrowset"
 
     Write-Output "bulk inserting $dbTable..."
