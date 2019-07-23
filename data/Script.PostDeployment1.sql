@@ -34,7 +34,6 @@ END TRY
 BEGIN CATCH
     PRINT N'MyCourses external data source already exists';
 END CATCH
-GO;
 
 BULK INSERT Courses
 FROM 'uploaddata/courses4.txt'
