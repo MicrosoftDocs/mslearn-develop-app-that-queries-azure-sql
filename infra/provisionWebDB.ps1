@@ -162,8 +162,7 @@ function Upload-DefaultData {
     Invoke-Sqlcmd `
         -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
         -Query "CREATE EXTERNAL DATA SOURCE MyCourses WITH  (TYPE = BLOB_STORAGE, LOCATION = 'https://$storageAccountName.blob.core.windows.net', CREDENTIAL = UploadDefaultData ); `
-                GO; `
-                BULK INSERT $dbTable FROM '$containerAndFile' WITH (DATA_SOURCE = 'MyCourses', FORMAT = 'CSV', FirstRow=2);"
+                GO;"
     Write-Output "Done creating database external data source"
     
     # Write-Output "selecting openrowset..."
@@ -172,11 +171,11 @@ function Upload-DefaultData {
     #     -Query "SELECT * FROM OPENROWSET(BULK '$containerAndFile', DATA_SOURCE = 'MyExternalSource', SINGLE_CLOB) AS DataFile;"
     # Write-Output "Done selecitn openrowset"
 
-    # Write-Output "bulk inserting $dbTable..."
-    # Invoke-Sqlcmd `
-    #     -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-    #     -Query "BULK INSERT $dbTable FROM '$containerAndFile' WITH (DATA_SOURCE = 'MyCourses', FORMAT = 'CSV', FirstRow=2);"
-    # Write-Output "Done Bulk inserting $dbTable"
+    Write-Output "bulk inserting $dbTable..."
+    Invoke-Sqlcmd `
+        -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "BULK INSERT $dbTable FROM '$containerAndFile' WITH (DATA_SOURCE = 'MyCourses', FORMAT = 'CSV', FirstRow=2);"
+    Write-Output "Done Bulk inserting $dbTable"
 
 
 }
