@@ -396,6 +396,20 @@ Set-AzureStorageBlobContent `
     -Blob "courses.txt" `
     -Context $Ctx `
     -Force
+
+Set-AzureStorageBlobContent `
+    -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\modules.txt" `
+    -Container $storageContainerName `
+    -Blob "modules.txt" `
+    -Context $Ctx `
+    -Force
+
+Set-AzureStorageBlobContent `
+    -File "D:\a\r1\a\_LearnDB-ASP.NETCore-CI\drop\studyplans.txt" `
+    -Container $storageContainerName `
+    -Blob "studyplans.txt" `
+    -Context $Ctx `
+    -Force
 Write-Output "Done uploading the file"
 
 # Uploading default data for Courses
@@ -415,6 +429,23 @@ if ($numRows.Column1 -eq 0) {
         -containerAndFile $storageContainerName+"/courses.txt" `
         -dbTable "Courses"
 
+    Upload-DefaultData `
+        -databaseServerName $servername `
+        -databaseName $dbName `
+        -databaseUser $adminLogin `
+        -databasePassword $adminPassword `
+        -storageAccountName $webStorageAccountName `
+        -containerAndFile $storageContainerName+"/modules.txt" `
+        -dbTable "Modules"
+
+    Upload-DefaultData `
+        -databaseServerName $servername `
+        -databaseName $dbName `
+        -databaseUser $adminLogin `
+        -databasePassword $adminPassword `
+        -storageAccountName $webStorageAccountName `
+        -containerAndFile $storageContainerName+"/studyplans.txt" `
+        -dbTable "Modules"
     Write-Output  "done loading data for $containerAndFile"
 }
 
