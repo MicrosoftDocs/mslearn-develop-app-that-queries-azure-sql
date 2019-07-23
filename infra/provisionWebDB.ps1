@@ -142,7 +142,7 @@ function Upload-DefaultData {
     try {
         Invoke-Sqlcmd `
             -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-            -Query "CREATE DATABASE SCOPED CREDENTIAL UploadDefaultData WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'DyGv1v7cAtA=='" 
+            -Query "CREATE DATABASE SCOPED CREDENTIAL UploadDefaultData WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'D+dEX8LjmnX4/NnUrx/NtWCdTBaHLZpSBLQvUW8KsJifLOYQeOTsUzjjgIfftHvnEETQ0RtZULVrsBXznuLD2g=='" 
     }
     catch {
         Write-Output "scoped credential already exists"
