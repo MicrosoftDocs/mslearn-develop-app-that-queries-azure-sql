@@ -154,14 +154,14 @@ function Upload-DefaultData {
     try {
         Invoke-Sqlcmd `
             -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-            -Query "Drop External Data Source MyExternalSource"
+            -Query "Drop External Data Source MyCourses"
     }
     catch {
-        Write-Output "MyExternalSource does not exists in the DB"
+        Write-Output "MyCourses does not exists in the DB"
     }
     Invoke-Sqlcmd `
         -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "CREATE EXTERNAL DATA SOURCE MyExternalSource WITH  (TYPE = BLOB_STORAGE, LOCATION = 'https://$storageAccountName.blob.core.windows.net', CREDENTIAL = UploadDefaultData );"
+        -Query "CREATE EXTERNAL DATA SOURCE MyCourses WITH  (TYPE = BLOB_STORAGE, LOCATION = 'https://$storageAccountName.blob.core.windows.net', CREDENTIAL = UploadDefaultData );"
     Write-Output "Done creating database external data source"
     
     # Write-Output "selecting openrowset..."
