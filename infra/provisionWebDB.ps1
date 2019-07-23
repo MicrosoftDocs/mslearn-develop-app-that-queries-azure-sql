@@ -209,13 +209,13 @@ Write-Output ""
 
 #endregion
 
-# Create a resource group
-#
-Write-Output "Creating resource group..."
-az group create `
-    --name $resourceGroupName `
-    --location $location
-Write-Output "Done creating resource group"
+# # Create a resource group
+# #
+# Write-Output "Creating resource group..."
+# az group create `
+#     --name $resourceGroupName `
+#     --location $location
+# Write-Output "Done creating resource group"
 
 # # Create a logical sql server in the resource group
 # # 
