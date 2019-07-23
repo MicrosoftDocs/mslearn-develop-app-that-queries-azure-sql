@@ -277,7 +277,7 @@ if ($numRows.Column1 -eq 0) {
     Write-Output "Full db name: $fullDbName"
     $fullServerName = $servername + ".database.windows.net"
     Write-Output "full server name: $fullServerName"
-    & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" $fullDbName in $releaseDirectory\_LearnDB-ASP.NETCore-CI\drop\courses.csv -S fullServerName -U $adminLogin -P $adminPassword -q -c -t "," -F 2
+    & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" $fullDbName in $releaseDirectory\_LearnDB-ASP.NETCore-CI\drop\courses.csv -S $fullServerName -U $adminLogin -P $adminPassword -q -c -t "," -F 2
 }
 
 else {
