@@ -161,7 +161,8 @@ function Upload-DefaultData {
     }
     Invoke-Sqlcmd `
         -ConnectionString "Server=tcp:$($databaseServerName).database.windows.net,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "CREATE EXTERNAL DATA SOURCE MyCourses WITH  (TYPE = BLOB_STORAGE, LOCATION = 'https://$storageAccountName.blob.core.windows.net', CREDENTIAL = UploadDefaultData );BULK INSERT $dbTable FROM '$containerAndFile' WITH (DATA_SOURCE = 'MyCourses', FORMAT = 'CSV', FirstRow=2);"
+        -Query "CREATE EXTERNAL DATA SOURCE MyCourses WITH  (TYPE = BLOB_STORAGE, LOCATION = 'https://$storageAccountName.blob.core.windows.net', CREDENTIAL = UploadDefaultData ); `
+                BULK INSERT $dbTable FROM '$containerAndFile' WITH (DATA_SOURCE = 'MyCourses', FORMAT = 'CSV', FirstRow=2);"
     Write-Output "Done creating database external data source"
     
     # Write-Output "selecting openrowset..."
@@ -243,23 +244,23 @@ Write-Output "Done creating resource group"
 # }
 # Write-Output "Done creating firewall rule for sql server"
 
-# # Create a database in the server with zone redundancy as false
-# #
-# Write-Output "Create sql db $dbName..."
-# try {
-#     az sql db create `
-#     --resource-group $resourceGroupName `
-#     --server $servername `
-#     --name $dbName `
-#     --edition $dbEdition `
-#     --family $dbFamily `
-#     --capacity $dbCapacity `
-#     --zone-redundant $dbZoneRedundant
-# }
-# catch {
-#     Write-Output "sql db already exists"
-# }
-# Write-Output "Done creating sql db"
+# Create a database in the server with zone redundancy as false
+#
+Write-Output "Create sql db $dbName..."
+try {
+    az sql db create `
+    --resource-group $resourceGroupName `
+    --server $servername `
+    --name $dbName `
+    --edition $dbEdition `
+    --family $dbFamily `
+    --capacity $dbCapacity `
+    --zone-redundant $dbZoneRedundant
+}
+catch {
+    Write-Output "sql db already exists"
+}
+Write-Output "Done creating sql db"
 
 # # create app service plan
 # #
@@ -297,20 +298,20 @@ Write-Output "Done creating resource group"
 
 # Write-Output "Done setting connection string"
 
-# Write-Output "creating db tables"
-# Invoke-Sqlcmd `
-#     -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-#     -Query "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Courses' and xtype='U') CREATE TABLE Courses ( CourseID INT NOT NULL PRIMARY KEY, CourseName VARCHAR(50) NOT NULL );"
+Write-Output "creating db tables"
+Invoke-Sqlcmd `
+    -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+    -Query "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Courses' and xtype='U') CREATE TABLE Courses ( CourseID INT NOT NULL PRIMARY KEY, CourseName VARCHAR(50) NOT NULL );"
 
-# Invoke-Sqlcmd `
-#     -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-#     -Query "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Modules' and xtype='U') CREATE TABLE Modules ( ModuleCode VARCHAR(5) NOT NULL PRIMARY KEY, ModuleTitle VARCHAR(50) NOT NULL );"
+Invoke-Sqlcmd `
+    -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+    -Query "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Modules' and xtype='U') CREATE TABLE Modules ( ModuleCode VARCHAR(5) NOT NULL PRIMARY KEY, ModuleTitle VARCHAR(50) NOT NULL );"
 
-# Invoke-Sqlcmd `
-#     -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-#     -Query "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='StudyPlans' and xtype='U') CREATE TABLE StudyPlans ( CourseID INT NOT NULL, ModuleCode VARCHAR(5) NOT NULL, ModuleSequence INT NOT NULL, PRIMARY KEY ( CourseID, ModuleCode) );"
+Invoke-Sqlcmd `
+    -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+    -Query "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='StudyPlans' and xtype='U') CREATE TABLE StudyPlans ( CourseID INT NOT NULL, ModuleCode VARCHAR(5) NOT NULL, ModuleSequence INT NOT NULL, PRIMARY KEY ( CourseID, ModuleCode) );"
 
-# Write-Output "done creating db tables"
+Write-Output "done creating db tables"
 
 # # this creates a storage account for our back end azure application insight to use
 # # 
