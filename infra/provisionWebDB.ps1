@@ -117,7 +117,10 @@ az account set `
     --subscription "$azureSubscriptionName"
 Write-Output "Done"
 Write-Output ""
+
 #endregion
+
+
 
 # Create a resource group
 #
@@ -297,6 +300,7 @@ Write-Output "Done creating data for uploading data"
 # upload csv file for course
 #
 Write-Output "Getting context for blob storage container..."
+Select-AzureSubscription -Default 
 $StorageAccountKey = Get-AzureStorageKey -StorageAccountName $webStorageAccountName
 $Ctx = New-AzureStorageContext $webStorageAccountName -StorageAccountKey $StorageAccountKey.Primary
 Write-Output "Done gettint context for blog storage container"
