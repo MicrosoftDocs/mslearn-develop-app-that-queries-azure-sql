@@ -306,9 +306,14 @@ Write-Output "Done creating data for uploading data"
 #     -SubscritpionId "e97f6c4e-c830-479b-81ad-1aff1dd07470"
 # Write-Output "Done selecting current azure subscription"
 
+Write-Output "Getting key for storage..."
+$keylist = $(az storage account keys list --account-name abellearndbstorage --resource-group abellearndbrg) | ConvertFrom-Json
+$storageKey = $keylist[0].value
+Write-Output "Finished getting key for storage"
+
 Write-Output "Getting context for blob storage container..."
 # $StorageAccountKey = Get-AzureStorageKey -StorageAccountName $webStorageAccountName
-$Ctx = New-AzureStorageContext -StorageAccountName $webStorageAccountName -StorageAccountKey "D+dEX8LjmnX4/NnUrx/NtWCdTBaHLZpSBLQvUW8KsJifLOYQeOTsUzjjgIfftHvnEETQ0RtZULVrsBXznuLD2g=="
+$Ctx = New-AzureStorageContext -StorageAccountName $webStorageAccountName -StorageAccountKey $storageKey
 Write-Output "Done gettint context for blog storage container"
 
 Write-Output "Upload the file using the context..."
@@ -350,13 +355,13 @@ if ($numRows.Column1 -eq 0) {
     Write-Output "selecting openrowset..."
     Invoke-Sqlcmd `
         -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "SELECT * FROM OPENROWSET(BULK  'uploaddata/courses4.txt', DATA_SOURCE = 'MyCourses', SINGLE_CLOB) AS DataFile;"
+        -Query "SELECT * FROM OPENROWSET(BULK  'uploaddata/courses.txt', DATA_SOURCE = 'MyCourses', SINGLE_CLOB) AS DataFile;"
     Write-Output "Done selecitn openrowset"
 
     Write-Output "bulk inserting Courses..."
     Invoke-Sqlcmd `
         -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "BULK INSERT Courses FROM 'uploaddata/courses4.txt' WITH (DATA_SOURCE = 'MyCourses', FORMAT = 'CSV', FirstRow=2);"
+        -Query "BULK INSERT Courses FROM 'uploaddata/courses.txt' WITH (DATA_SOURCE = 'MyCourses', FORMAT = 'CSV', FirstRow=2);"
     Write-Output "Done Bulk inserting Courses"
 
     Write-Output  "done loading data for Courses"
