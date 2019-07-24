@@ -96,6 +96,52 @@ param(
     $storageContainerName
 )
 
+#region function to upload default data
+# this function uploads default data to a table
+#
+function Upload-DefaultData {
+    param(
+        [Parameter(Mandatory = $True)]
+        [string]
+        $dbServerName,
+
+        [Parameter(Mandatory = $True)]
+        [string]
+        $dbId,
+
+        [Parameter(Mandatory = $True)]
+        [string]
+        $userId,
+
+        [Parameter(Mandatory = $True)]
+        [string]
+        $userPassword,
+
+        [Parameter(Mandatory = $True)]
+        [string]
+        $releaseDirectoryName,
+
+        [Parameter(Mandatory = $True)]
+        [string]
+        $uploadFile
+    )
+    Write-Output "Checking data for $dbId..."
+    $numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:$dbServerName.database.windows.net,1433;Initial Catalog=$dbId;Persist Security Info=False;User ID=$userId;Password=$userPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "SELECT Count(*) FROM $dbId" `
+    )
+    if ($numRows.Column1 -eq 0) {
+        Write-Output "No data for $dbId, loading default data..."
+        $fullDbName = $dbId + ".dbo.Courses"
+        $fullServerName = $dbServerName + ".database.windows.net"
+        & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" $fullDbName in $releaseDirectory\_LearnDB-ASP.NETCore-CI\drop\$uploadFile -S $fullServerName -U $userId -P $userPassword -q -c -t "," -F 2
+    }
+    else {
+        Write-Output "Data already exists for $dbId"
+    }    
+    Write-Output "done checking data for $dbId"
+}
+#endregion
+
 
 
 #region Login
@@ -267,22 +313,18 @@ Write-Output "refreshing environment..."
 refreshenv
 Write-Output "done refreshing environment"
 
-# Uploading default data for Courses
+# Uploading default data for tables
 #
 Write-Output "Checking data for Courses..."
-$numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:$servername.database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" -Query "SELECT Count(*) FROM Courses")
-if ($numRows.Column1 -eq 0) {
-    Write-Output "No data for Courses, loading default data..."
-    $fullDbName = $dbName + ".dbo.Courses"
-    Write-Output "Full db name: $fullDbName"
-    $fullServerName = $servername + ".database.windows.net"
-    Write-Output "full server name: $fullServerName"
-    & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" $fullDbName in $releaseDirectory\_LearnDB-ASP.NETCore-CI\drop\courses.csv -S $fullServerName -U $adminLogin -P $adminPassword -q -c -t "," -F 2
-}
-
-else {
-    Write-Output "Data already exists for Courses"
-}    
+Upload-DefaultData -dbServerName $servername -dbId "Courses" -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile courses.csv
 Write-Output "done checking data for Courses"
+
+Write-Output "Checking data for Modules..."
+Upload-DefaultData -dbServerName $servername -dbId Modules -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile modules.csv
+Write-Output "done checking data for Modules"
+
+Write-Output "Checking data for studyplans..."
+Upload-DefaultData -dbServerName $servername -dbId Modules -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile studyplans.csv
+Write-Output "done checking data for studyplans"
 #endregion
 
