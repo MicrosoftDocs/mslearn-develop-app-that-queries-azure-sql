@@ -93,7 +93,11 @@ param(
 
     [Parameter(Mandatory = $True)]
     [string]
-    $storageContainerName
+    $storageContainerName,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $dbComputeModel
 )
 
 #region function to upload default data
@@ -231,9 +235,20 @@ try {
     --server $servername `
     --name $dbName `
     --edition $dbEdition `
-    --family $dbFamily `
-    --capacity $dbCapacity `
+    --ComputeGeneration $dbFamily `
+    --Vcore $dbCapacity `
     --zone-redundant $dbZoneRedundant
+
+
+
+
+
+    -\
+
+
+
+
+    --ComputeModel $dbComputeModel
 }
 catch {
     Write-Output "sql db already exists"
