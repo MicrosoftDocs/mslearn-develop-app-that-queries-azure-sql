@@ -13,4 +13,5 @@
             this.ModuleTitle = moduleTitle;
             this.Sequence = sequence;
         }
+    }
 }
