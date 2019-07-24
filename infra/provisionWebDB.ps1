@@ -129,14 +129,14 @@ function Upload-DefaultData {
     Write-Output "Checking data for $dbId..."
     Write-Output "user name: $userId"
     Write-Output "user password: $userPassword"
-    $numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:$dbServerName.database.windows.net,1433;Initial Catalog=$dbId;Persist Security Info=False;User ID=$userId;Password=$userPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+    $numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=learndb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
         -Query "SELECT Count(*) FROM $dbId" `
     )
     if ($numRows.Column1 -eq 0) {
         Write-Output "No data for $dbId, loading default data..."
         $fullDbName = $dbId + ".dbo.Courses"
         $fullServerName = $dbServerName + ".database.windows.net"
-        & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" $fullDbName in $releaseDirectory\_LearnDB-ASP.NETCore-CI\drop\$uploadFile -S $fullServerName -U $userId -P $userPassword -q -c -t "," -F 2
+        & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" $fullDbName in $releaseDirectory\_LearnDB-ASP.NETCore-CI\drop\$uploadFile -S $fullServerName -U $userId -P g83P@BxDXma700000 -q -c -t "," -F 2
         Write-Output "done upload default data for $dbId"
     }
     else {
