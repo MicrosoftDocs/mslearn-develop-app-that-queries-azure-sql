@@ -97,6 +97,7 @@ param(
 )
 
 #region function to upload default data
+
 # this function uploads default data to a table
 #
 function Upload-DefaultData {
@@ -126,6 +127,8 @@ function Upload-DefaultData {
         $uploadFile
     )
     Write-Output "Checking data for $dbId..."
+    Write-Output "user name: $userId"
+    Write-Output "user password: $userPassword"
     $numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:$dbServerName.database.windows.net,1433;Initial Catalog=$dbId;Persist Security Info=False;User ID=$userId;Password=$userPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
         -Query "SELECT Count(*) FROM $dbId" `
     )
@@ -134,6 +137,7 @@ function Upload-DefaultData {
         $fullDbName = $dbId + ".dbo.Courses"
         $fullServerName = $dbServerName + ".database.windows.net"
         & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" $fullDbName in $releaseDirectory\_LearnDB-ASP.NETCore-CI\drop\$uploadFile -S $fullServerName -U $userId -P $userPassword -q -c -t "," -F 2
+        Write-Output "done upload default data for $dbId"
     }
     else {
         Write-Output "Data already exists for $dbId"
@@ -165,7 +169,6 @@ az account set `
     --subscription "$azureSubscriptionName"
 Write-Output "Done"
 Write-Output ""
-
 #endregion
 
 
@@ -179,7 +182,6 @@ az group create `
     --name $resourceGroupName `
     --location $location
 Write-Output "Done creating resource group"
-
 #endregion
 
 
@@ -240,6 +242,7 @@ Write-Output "Done creating sql db"
 
 
 #region create app service
+
 # create app service plan
 #
 Write-Output "creating app service plan..."
@@ -275,7 +278,6 @@ az webapp config connection-string set `
     --settings connectionString="Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
 Write-Output "Done setting connection string"
-
 #endregion
 
 
@@ -315,16 +317,9 @@ Write-Output "done refreshing environment"
 
 # Uploading default data for tables
 #
-Write-Output "Checking data for Courses..."
-Upload-DefaultData -dbServerName $servername -dbId "Courses" -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile courses.csv
-Write-Output "done checking data for Courses"
 
-Write-Output "Checking data for Modules..."
+Upload-DefaultData -dbServerName $servername -dbId Courses -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile courses.csv
 Upload-DefaultData -dbServerName $servername -dbId Modules -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile modules.csv
-Write-Output "done checking data for Modules"
-
-Write-Output "Checking data for studyplans..."
-Upload-DefaultData -dbServerName $servername -dbId Modules -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile studyplans.csv
-Write-Output "done checking data for studyplans"
+Upload-DefaultData -dbServerName $servername -dbId StudyPlans -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile studyplans.csv
 #endregion
 
