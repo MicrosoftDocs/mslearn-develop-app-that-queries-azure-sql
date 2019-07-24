@@ -131,7 +131,7 @@ function Upload-DefaultData {
         $tableName
     )
     Write-Output "Checking data for $tableName..."
-    $numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=leanrdb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+    $numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=learndb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
         -Query "SELECT Count(*) FROM $tableName" `
     )
     if ($numRows.Column1 -eq 0) {
@@ -322,7 +322,7 @@ Write-Output "done refreshing environment"
 #
 
 Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile courses.csv -tableName Courses
-Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile modules.csv -tableName Modules
-Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile studyplans.csv -tableName StudyPlans
+# Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile modules.csv -tableName Modules
+# Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile studyplans.csv -tableName StudyPlans
 #endregion
 
