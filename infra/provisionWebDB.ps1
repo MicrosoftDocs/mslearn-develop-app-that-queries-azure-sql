@@ -124,25 +124,28 @@ function Upload-DefaultData {
 
         [Parameter(Mandatory = $True)]
         [string]
-        $uploadFile
+        $uploadFile,
+
+        [Parameter(Mandatory = $True)]
+        [string]
+        $tableName
     )
-    Write-Output "Checking data for $dbId..."
-    Write-Output "user name: $userId"
-    Write-Output "user password: $userPassword"
-    $numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=learndb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
-        -Query "SELECT Count(*) FROM $dbId" `
+    Write-Output "Checking data for $tableName..."
+    $numRows=$(Invoke-Sqlcmd -ConnectionString "Server=tcp:abellearndbserver1.database.windows.net,1433;Initial Catalog=leanrdb;Persist Security Info=False;User ID=abel;Password=g83P@BxDXma700000;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+        -Query "SELECT Count(*) FROM $tableName" `
     )
     if ($numRows.Column1 -eq 0) {
-        Write-Output "No data for $dbId, loading default data..."
-        $fullDbName = $dbId + ".dbo.Courses"
+        Write-Output "No data for $tableName, loading default data..."
+        $fullDbName = $dbId + ".dbo." + $tableName
+        Write-Output "full db name: $fullDbName"
         $fullServerName = $dbServerName + ".database.windows.net"
         & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" $fullDbName in $releaseDirectory\_LearnDB-ASP.NETCore-CI\drop\$uploadFile -S $fullServerName -U abel -P "g83P@BxDXma700000" -q -c -t "," -F 2
-        Write-Output "done upload default data for $dbId"
+        Write-Output "done upload default data for $tableName"
     }
     else {
-        Write-Output "Data already exists for $dbId"
+        Write-Output "Data already exists for $tableName"
     }    
-    Write-Output "done checking data for $dbId"
+    Write-Output "done checking data for $tableName"
 }
 #endregion
 
@@ -318,8 +321,8 @@ Write-Output "done refreshing environment"
 # Uploading default data for tables
 #
 
-Upload-DefaultData -dbServerName $servername -dbId Courses -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile courses.csv
-Upload-DefaultData -dbServerName $servername -dbId Modules -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile modules.csv
-Upload-DefaultData -dbServerName $servername -dbId StudyPlans -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile studyplans.csv
+Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile courses.csv -tableName Courses
+Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile modules.csv -tableName Modules
+Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile studyplans.csv -tableName StudyPlans
 #endregion
 
