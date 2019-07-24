@@ -237,18 +237,8 @@ try {
     --edition $dbEdition `
     --ComputeGeneration $dbFamily `
     --Vcore $dbCapacity `
-    --zone-redundant $dbZoneRedundant
-
-
-
-
-
-    -\
-
-
-
-
-    --ComputeModel $dbComputeModel
+    --zone-redundant $dbZoneRedundant `
+    --ComputeModel $dbComputeModel `
 }
 catch {
     Write-Output "sql db already exists"
