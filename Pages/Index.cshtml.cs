@@ -5,18 +5,26 @@ using System.Threading.Tasks;
 using CoursesWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 
 namespace CoursesWebApp.Pages
 {
     public class CoursesAndModulesModel : PageModel
     {
-        // TODO: Create a DataAccessController object
+        private IConfiguration _configuration;
+        private DataAccessController _dac;
 
-        // TODO: Create a collection for holding CoursesAndModules object
-        
+        public List<CoursesAndModules> CoursesAndModules;
+
+        public CoursesAndModulesModel (IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _dac = new DataAccessController(_configuration);
+        }
+
         public void OnGet()
         {
-            // TODO: Retrieve the data using the DataAccessController object and populate the CoursesAndModules object
+            CoursesAndModules = _dac.GetAllCoursesAndModules().ToList();
         }
     }
 }

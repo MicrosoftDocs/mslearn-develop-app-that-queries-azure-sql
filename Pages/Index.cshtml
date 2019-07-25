@@ -21,7 +21,20 @@
             </tr>
         </thead>
         <tbody>
-            <!-- TODO: Display the data from the CoursesAndModules collection -->            
+            @foreach (var courseAndModule in Model.CoursesAndModules)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(courseName => courseAndModule.CourseName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(moduleTitle => courseAndModule.ModuleTitle)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(sequence => courseAndModule.Sequence)
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>

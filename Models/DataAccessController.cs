@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,7 +12,13 @@ namespace CoursesWebApp.Models
     public class DataAccessController
     {
         // TODO: Add your connection string in the following statements
-        private string connectionString = "<Azure SQL Database Connection String>";
+        private string _connectionString;
+
+        public DataAccessController(IConfiguration configuration)
+        {
+            _connectionString = configuration.GetValue<string>("DefaultConnection");
+
+        }
 
         // Retrieve all details of courses and their modules    
         public IEnumerable<CoursesAndModules> GetAllCoursesAndModules()
@@ -19,15 +26,30 @@ namespace CoursesWebApp.Models
             List<CoursesAndModules> courseList = new List<CoursesAndModules>();
 
             // TODO: Connect to the database
-            //using ()
+            using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                // TODO: Specify the SQL query to run
-                
-                // TODO: Execute the query
-                
-                // TODO: Read the data a row at a time
-                
-                // TODO: Close the database connection
+                SqlCommand cmd = new SqlCommand(
+                    @"SELECT c.CourseName, m.ModuleTitle, s.ModuleSequence
+                    FROM dbo.Courses c JOIN dbo.StudyPlans s
+                    ON c.CourseID = s.CourseID
+                    JOIN dbo.Modules m
+                    ON m.ModuleCode = s.ModuleCode
+                    ORDER BY c.CourseName, s.ModuleSequence", con);
+                cmd.CommandType = CommandType.Text;
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    string courseName = rdr["CourseName"].ToString();
+                    string moduleTitle = rdr["ModuleTitle"].ToString();
+                    int moduleSequence = Convert.ToInt32(rdr["ModuleSequence"]);
+                    CoursesAndModules course = new CoursesAndModules(courseName, moduleTitle, moduleSequence);
+                    courseList.Add(course);
+                }
+
+                con.Close();
             }
             return courseList;
         }
