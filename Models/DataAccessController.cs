@@ -16,7 +16,7 @@ namespace CoursesWebApp.Models
 
         public DataAccessController(IConfiguration configuration)
         {
-            _connectionString = configuration.GetValue<string>("DefaultConnection");
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
 
         }
 
