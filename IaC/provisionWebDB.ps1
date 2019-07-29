@@ -229,20 +229,18 @@ Write-Output "Done creating firewall rule for sql server"
 # Create a database in the server with zone redundancy as false
 #
 Write-Output "Create sql db $dbName..."
-#try {
+# try {
     az sql db create `
     --resource-group $resourceGroupName `
     --server $servername `
     --name $dbName `
     --edition $dbEdition `
-    --ComputeGeneration $dbFamily `
-    --Vcore $dbCapacity `
+    --family $dbFamily `
     --zone-redundant $dbZoneRedundant `
-    --ComputeModel $dbComputeModel
-#}
-#catch {
-#    Write-Output "sql db already exists"
-#}
+# }
+# catch {
+#     Write-Output "sql db already exists"
+# }
 Write-Output "Done creating sql db"
 #endregion
 
