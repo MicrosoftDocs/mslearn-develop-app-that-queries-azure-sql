@@ -80,3 +80,31 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
+
+ - stage: Deploy
+  jobs:
+  - job: DeployEnvironment
+    pool:
+      name: HHosted Windows 2019 with VS2019
+    variables:
+      adminlogin: abel
+      azureSubscriptionName: ca-abewan-demo-Test
+      dbCapacity: 1
+      dbComputeModel: Serverless
+      dbEdition: GeneralPurpose
+      dbFamily: Gen4
+      dbName: learndb
+      dbZoneRedundant: false
+      endip: 0.0.0.0
+      location: southcentralus
+      resourceGroupHName: abellearndbrg
+      servername: abellearndbserver1
+      servicePrincipal: http://AbelDeployPrincipal
+      servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
+      startip: 0.0.0.0
+      storageContainerName: uploaddata
+      webAppName: abellearndbwebapp
+      webAppSku: B1
+      webStorageAccountName: abellearndbstorage
+      webStorageAccountRegion: southcentralus
+      webStorageAccountSku: Standard_LRS
