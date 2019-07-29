@@ -17,7 +17,6 @@ namespace CoursesWebApp.Models
         public DataAccessController(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
-
         }
 
         // Retrieve all details of courses and their modules    
