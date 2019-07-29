@@ -237,6 +237,7 @@ Write-Output "Create sql db $dbName..."
     --edition $dbEdition `
     --family $dbFamily `
     --zone-redundant $dbZoneRedundant `
+	--capacity 1
 # }
 # catch {
 #     Write-Output "sql db already exists"
