@@ -142,7 +142,7 @@ function Upload-DefaultData {
         Write-Output "No data for $tableName, loading default data..."
         $fullDbName = $dbId + ".dbo." + $tableName
         $fullServerName = $dbServerName + ".database.windows.net"
-        & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" $fullDbName in $releaseDirectory\_LearnDB-ASP.NETCore-CI\drop\$uploadFile -S $fullServerName -U $userId -P "$userPassword" -q -c -t "," -F 2
+        & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\bcp" $fullDbName in $releaseDirectory\_LearnDB-ASP.NETCore-CI\drop\data\$uploadFile -S $fullServerName -U $userId -P "$userPassword" -q -c -t "," -F 2
         Write-Output "done upload default data for $tableName"
     }
     else {
