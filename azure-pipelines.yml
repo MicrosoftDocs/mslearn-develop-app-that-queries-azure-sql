@@ -1,0 +1,82 @@
+name: $(Date:yyyMMdd)$(Rev:.r)
+stages:
+- stage: Build
+  jobs:
+  - job: BuildJob
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    variables:
+      BuildConfiguration: Debug
+      BuildPlatform: any cpu
+
+  steps:
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: '**/*.csproj'
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects: '**/*.csproj'
+      arguments: '--configuration $(BuildConfiguration)'
+  
+  - task: DotNetCoreCLI@2
+    displayName: Test
+    inputs:
+      command: test
+      projects: '$(Parameters.TestProjects)'
+      arguments: '--configuration $(BuildConfiguration)'
+  
+  - task: DotNetCoreCLI@2
+    displayName: Publish
+    inputs:
+      command: publish
+      publishWebProjects: True
+      arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+      zipAfterPublish: True
+  
+  - task: VSBuild@1
+    displayName: 'Build solution Database/Database.sln'
+    inputs:
+      solution: Database/Database.sln
+  
+  - task: CopyFiles@2
+    displayName: 'Copy dacpac, IaC, ahd data Files to Staging'
+    inputs:
+      Contents: |
+       Database/bin/**/*.dacpac
+       IaC/**
+       data/**
+      TargetFolder: '$(Build.StagingDirectory)'
+  
+  - task: CopyFiles@2
+    displayName: 'Copy dacpac to Staging'
+    inputs:
+      SourceFolder: Database/bin
+      Contents: |
+       **\**.dacpac
+       
+      TargetFolder: '$(Build.StagingDirectory)'
+    enabled: false
+  
+  - task: CopyFiles@2
+    displayName: 'Copy IaC files to Staging'
+    inputs:
+      SourceFolder: infra
+      TargetFolder: '$(Build.StagingDirectory)'
+    enabled: false
+  
+  - task: CopyFiles@2
+    displayName: 'Copy Data Files to Staging'
+    inputs:
+      SourceFolder: data
+      TargetFolder: '$(Build.StagingDirectory)'
+    enabled: false
+  
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
+    condition: succeededOrFailed()
