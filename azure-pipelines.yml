@@ -81,7 +81,7 @@ stages:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
 
-- stage: Deploy to Dev
+- stage: DeployToDev
   jobs:
   - job: DeployEnvironment
     pool:
