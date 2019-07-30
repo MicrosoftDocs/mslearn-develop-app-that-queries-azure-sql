@@ -64,27 +64,27 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
       variables:
-        adminlogin: abel
-        azureSubscriptionName: ca-abewan-demo-Test
-        dbCapacity: 1
-        dbComputeModel: Serverless
-        dbEdition: GeneralPurpose
-        dbFamily: Gen4
-        dbName: learndb
-        dbZoneRedundant: false
-        endip: 0.0.0.0
-        location: southcentralus
-        resourceGroupHName: abellearndbrg2
-        servername: abellearndbserver1
         servicePrincipal: http://AbelDeployPrincipal
         servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
+        azureSubscriptionName: ca-abewan-demo-test
+        resourceGroupName: abellearndbrg3
+        location: southcentralus
+        adminlogin: abel
+        servername: abellearndbserverdev
         startip: 0.0.0.0
-        storageContainerName: uploaddata
-        webAppName: abellearndbwebapp
+        endip: 0.0.0.0
+        dbName: learndb
+        dbEdition: GeneralPurpose
+        dbFamily: Gen4
+        dbCapacity: 1
+        dbZoneRedundant: false
+        webAppName: abellearndbwebappdev
         webAppSku: B1
-        webStorageAccountName: abellearndbstorage
+        webStorageAccountName: abellearnwebstoragedev
         webStorageAccountRegion: southcentralus
         webStorageAccountSku: Standard_LRS
+        storageContainerName: abellearnstoragedev
+        dbComputeModel: Serverless
     environment: 'courses-dev'
     strategy:
       runOnce:
@@ -98,7 +98,7 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogindev) -adminPassword $(adminPasswordDev) -servername $(servernamedev) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppNameDev) -webAppSku $(webAppSku) -releaseDirectory $(Agent.ReleaseDirectory) -webStorageAccountName $(webStorageAccountName) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerNameDev) -dbComputeModel $(dbComputeModel)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Agent.ReleaseDirectory) -webStorageAccountName $(webStorageAccountName) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerName) -dbComputeModel $(dbComputeModel)'
           
           - task: AzureRmWebAppDeployment@4
             inputs:
@@ -115,27 +115,27 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
       variables:
-        adminlogin: abel
-        azureSubscriptionName: ca-abewan-demo-Test
-        dbCapacity: 1
-        dbComputeModel: Serverless
-        dbEdition: GeneralPurpose
-        dbFamily: Gen4
-        dbName: learndb
-        dbZoneRedundant: false
-        endip: 0.0.0.0
-        location: southcentralus
-        resourceGroupName: abellearndbrg2
-        servername: abellearndbserver1
         servicePrincipal: http://AbelDeployPrincipal
         servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
+        azureSubscriptionName: ca-abewan-demo-test
+        resourceGroupName: abellearndbrg3
+        location: southcentralus
+        adminlogin: abel
+        servername: abellearndbserverprod
         startip: 0.0.0.0
-        storageContainerName: uploaddata
-        webAppName: abellearndbwebapp
+        endip: 0.0.0.0
+        dbName: learndb
+        dbEdition: GeneralPurpose
+        dbFamily: Gen4
+        dbCapacity: 1
+        dbZoneRedundant: false
+        webAppName: abellearndbwebappprod
         webAppSku: B1
-        webStorageAccountName: abellearndbstorage
+        webStorageAccountName: abellearnwebstorageprod
         webStorageAccountRegion: southcentralus
         webStorageAccountSku: Standard_LRS
+        storageContainerName: abellearnstorageprod
+        dbComputeModel: Serverless
     environment: 'courses-prod'
     strategy:
       runOnce:
@@ -149,7 +149,7 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminloginProd) -adminPassword $(adminPasswordProd) -servername $(servernameProd) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppNameProd) -webAppSku $(webAppSku) -releaseDirectory $(Agent.ReleaseDirectory) -webStorageAccountName $(webStorageAccountNameProd) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerNameProd) -dbComputeModel $(dbComputeModel)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordProd) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Agent.ReleaseDirectory) -webStorageAccountName $(webStorageAccountNameProd) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerNameProd) -dbComputeModel $(dbComputeModel)'
           
           - task: AzureRmWebAppDeployment@4
             inputs:
