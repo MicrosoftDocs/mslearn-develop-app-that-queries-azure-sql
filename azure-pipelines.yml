@@ -90,7 +90,6 @@ stages:
             patterns: '**/*'
           
           - task: SqlAzureDacpacDeployment@1
-            displayName: 
             inputs:
               azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
               AuthenticationType: 'server'
@@ -99,10 +98,10 @@ stages:
               SqlUsername: '$(adminlogin)'
               SqlPassword: '$(adminPasswordDev)'
               deployType: 'DacpacTask'
-              DeploymentAction: 'DeployReport'
+              DeploymentAction: 'Script'
               DacpacFile: '$(Pipeline.Workspace)/drop/Database/bin/Debug/Database.dacpac'
               IpDetectionMethod: 'AutoDetect'
-
+          
           - task: PowerShell@2
             displayName: Write SQL Update Report
             inputs:
