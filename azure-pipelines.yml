@@ -57,6 +57,52 @@ stages:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
 
+- stage: GenerateDBDeploymentScript
+  jobs:
+  - deployment: GenerateDBDeploymentScript
+    displayName: Generate DB Deployment Script
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    variables:
+      servicePrincipal: http://AbelDeployPrincipal
+      servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
+      azureSubscriptionName: ca-abewan-demo-test
+      resourceGroupName: abellearndbrg3
+      location: southcentralus
+      adminlogin: abel
+      servername: abellearndbserverdev
+      startip: 0.0.0.0
+      endip: 0.0.0.0
+      dbName: learndb
+      dbEdition: GeneralPurpose
+      dbFamily: Gen4
+      dbCapacity: 1
+      dbZoneRedundant: false
+      webAppName: abellearndbwebappdev
+      webAppSku: B1
+    environment: 'courses-dev-checkdbscript'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
+          
+          - task: SqlAzureDacpacDeployment@1
+            inputs:
+              azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+              AuthenticationType: 'server'
+              ServerName: '$(servername).database.windows.net'
+              DatabaseName: '$(dbName)'
+              SqlUsername: '$(adminlogin)'
+              SqlPassword: '$(adminPasswordDev)'
+              deployType: 'DacpacTask'
+              DeploymentAction: 'DeployReport'
+              DacpacFile: '$(Pipeline.Workspace)/drop/Database/bin/Debug/Database.dacpac'
+              IpDetectionMethod: 'AutoDetect'
+
+              
 - stage: DeployToDev
   jobs:
   - deployment: DeployInfraWebDB
