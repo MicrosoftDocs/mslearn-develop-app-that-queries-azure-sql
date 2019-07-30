@@ -100,7 +100,7 @@ stages:
               ConnectionType: 'AzureRM'
               azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
               appType: 'webApp'
-              WebAppName: '$(webAppName)'
+              WebAppName: '$(webAppNameDev)'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
 
           - task: SqlAzureDacpacDeployment@1
@@ -159,7 +159,7 @@ stages:
               ConnectionType: 'AzureRM'
               azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
               appType: 'webApp'
-              WebAppName: '$(webAppName)'
+              WebAppName: '$(webAppNameProd)'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
               
           - task: SqlAzureDacpacDeployment@1
