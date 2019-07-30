@@ -112,7 +112,7 @@ stages:
                 
                 Write-Host "Hello World"
                 
-                Get-Content $(SqlDeploymentOutputFile) | foreach {Write-Output $_}
+                Get-Content "d:\a\1\s\GeneratedOutputFiles\learndb_DeployReport.xml" | foreach {Write-Output $_}
               
 - stage: DeployToDev
   jobs:
