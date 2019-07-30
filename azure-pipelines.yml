@@ -103,6 +103,19 @@ stages:
               WebAppName: '$(webAppName)'
               packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
 
+          - task: SqlAzureDacpacDeployment@1
+            inputs:
+              azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+              AuthenticationType: 'server'
+              ServerName: '$(servernamedev).database.windows.net'
+              DatabaseName: '$(dbName)'
+              SqlUsername: '$(adminlogindev)'
+              SqlPassword: '$(adminPasswordDev)'
+              deployType: 'DacpacTask'
+              DeploymentAction: 'Publish'
+              DacpacFile: '$(Pipeline.Workspace)/drop/Database/bin/Debug/Database.dacpac'
+              IpDetectionMethod: 'AutoDetect'
+
 - stage: DeployToProd
   jobs:
   - deployment: DeployInfraWebDB
@@ -148,3 +161,17 @@ stages:
               appType: 'webApp'
               WebAppName: '$(webAppName)'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
+              
+          - task: SqlAzureDacpacDeployment@1
+            inputs:
+              azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+              AuthenticationType: 'server'
+              ServerName: '$(servernameprod).database.windows.net'
+              DatabaseName: '$(dbName)'
+              SqlUsername: '$(adminloginprod)'
+              SqlPassword: '$(adminPasswordProd)'
+              deployType: 'DacpacTask'
+              DeploymentAction: 'Publish'
+              DacpacFile: '$(Pipeline.Worksppace)/drop/Database/bin/Debug/Database.dacpac'
+              IpDetectionMethod: 'AutoDetect'
+          
