@@ -80,6 +80,7 @@ stages:
       dbZoneRedundant: false
       webAppName: abellearndbwebappdev
       webAppSku: B1
+      SqlDeploymentOutputFile: x
     environment: 'courses-dev-checkdbscript'
     strategy:
       runOnce:
@@ -103,15 +104,15 @@ stages:
               IpDetectionMethod: 'AutoDetect'
           
           - task: PowerShell@2
-            displayName: Write SQL Update Report
+            displayName: Show SQL Generated Script
             inputs:
               targetType: 'inline'
               script: |
                 # Write your PowerShell commands here.
                 
-                Write-Host "Hello World"
+                Write-Host "Auto Generated SQL Update Script:"
                 
-                Get-Content "d:\a\1\s\GeneratedOutputFiles\learndb_DeployReport.xml" | foreach {Write-Output $_}
+                Get-Content $(SqlDeploymentOutputFile) | foreach {Write-Output $_}
               
 - stage: DeployToDev
   jobs:
