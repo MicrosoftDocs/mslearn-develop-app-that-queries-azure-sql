@@ -43,38 +43,14 @@ stages:
         solution: Database/Database.sln
     
     - task: CopyFiles@2
-      displayName: 'Copy dacpac, IaC, ahd data Files to Staging'
+      displayName: 'Copy dacpac, IaC, and data Files to Staging'
       inputs:
         Contents: |
          Database/bin/**/*.dacpac
          IaC/**
          data/**
         TargetFolder: '$(Build.StagingDirectory)'
-    
-    - task: CopyFiles@2
-      displayName: 'Copy dacpac to Staging'
-      inputs:
-        SourceFolder: Database/bin
-        Contents: |
-         **\**.dacpac
-         
-        TargetFolder: '$(Build.StagingDirectory)'
-      enabled: false
-    
-    - task: CopyFiles@2
-      displayName: 'Copy IaC files to Staging'
-      inputs:
-        SourceFolder: infra
-        TargetFolder: '$(Build.StagingDirectory)'
-      enabled: false
-    
-    - task: CopyFiles@2
-      displayName: 'Copy Data Files to Staging'
-      inputs:
-        SourceFolder: data
-        TargetFolder: '$(Build.StagingDirectory)'
-      enabled: false
-    
+
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact'
       inputs:
