@@ -83,7 +83,8 @@ stages:
 
 - stage: DeployToDev
   jobs:
-  - job: DeployEnvironment
+  - deployment: DeployInfraWebDB
+    displayName: Deploy Infra Web and DB
     pool:
       name: Hosted Windows 2019 with VS2019
       variables:
@@ -108,21 +109,25 @@ stages:
         webStorageAccountName: abellearndbstorage
         webStorageAccountRegion: southcentralus
         webStorageAccountSku: Standard_LRS
-    steps:
-    - download: current
-      artifact: drop
-      patterns: '**/*'
+    environment: 'courses-dev'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
 
-    - task: PowerShell@2
-      displayName : 'Provision DB and Web'
-      inputs:
-        filePath: '$(System.DefaultWorkingDirectory)/_LearnDB-ASP.NETCore-CI/drop/IaC/provisionWebDB.ps1'
-        arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPassword) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Agent.ReleaseDirectory) -webStorageAccountName $(webStorageAccountName) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerName) -dbComputeModel $(dbComputeModel)'
-
-    - task: AzureRmWebAppDeployment@4
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
-        appType: 'webApp'
-        WebAppName: '$(webAppName)'
-        packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+          - task: PowerShell@2
+            displayName : 'Provision DB and Web'
+            inputs:
+              filePath: '$(System.DefaultWorkingDirectory)/_LearnDB-ASP.NETCore-CI/drop/IaC/provisionWebDB.ps1'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPassword) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Agent.ReleaseDirectory) -webStorageAccountName $(webStorageAccountName) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerName) -dbComputeModel $(dbComputeModel)'
+          
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+              appType: 'webApp'
+              WebAppName: '$(webAppName)'
+              packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
