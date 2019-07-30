@@ -80,7 +80,6 @@ stages:
       dbZoneRedundant: false
       webAppName: abellearndbwebappdev
       webAppSku: B1
-      SqlDeploymentOutputFile: x
     environment: 'courses-dev-checkdbscript'
     strategy:
       runOnce:
@@ -112,7 +111,7 @@ stages:
                 
                 Write-Host "Auto Generated SQL Update Script:"
                 
-                Get-Content $(SqlDeploymentOutputFile) | foreach {Write-Output $_}
+                Get-Content d:\a\1\s\GeneratedOutputFiles\learndb_Script.sql | foreach {Write-Output $_}
               
 - stage: DeployToDev
   jobs:
