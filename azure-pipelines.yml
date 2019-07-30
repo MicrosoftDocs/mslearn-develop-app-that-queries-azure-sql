@@ -113,15 +113,16 @@ stages:
       artifact: drop
       patterns: '**/*'
 
-    - task: AzureCLI@1
-      displayName: 'Azure CLI: Deploy infrastructure for Infra Tools'
-      inputs:
-        azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
-        scriptPath: '$(Pipeline.Workspace)/drop/provisionInfraTools.bash'
-        addSpnToEnvironment: true
-    
     - task: PowerShell@2
       displayName : 'Provision DB and Web'
       inputs:
         filePath: '$(System.DefaultWorkingDirectory)/_LearnDB-ASP.NETCore-CI/drop/IaC/provisionWebDB.ps1'
         arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPassword) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Agent.ReleaseDirectory) -webStorageAccountName $(webStorageAccountName) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerName) -dbComputeModel $(dbComputeModel)'
+
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+        appType: 'webApp'
+        WebAppName: '$(webAppName)'
+        packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
