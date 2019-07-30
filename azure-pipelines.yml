@@ -109,7 +109,7 @@ stages:
               AuthenticationType: 'server'
               ServerName: '$(servernamedev).database.windows.net'
               DatabaseName: '$(dbName)'
-              SqlUsername: '$(adminlogin
+              SqlUsername: '$(adminlogin)'
               SqlPassword: '$(adminPasswordDev)'
               deployType: 'DacpacTask'
               DeploymentAction: 'Publish'
