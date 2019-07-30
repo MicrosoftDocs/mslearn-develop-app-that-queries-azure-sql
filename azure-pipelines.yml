@@ -81,30 +81,41 @@ stages:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
 
- - stage: Deploy
-  jobs:
-  - job: DeployEnvironment
-    pool:
-      name: HHosted Windows 2019 with VS2019
-    variables:
-      adminlogin: abel
-      azureSubscriptionName: ca-abewan-demo-Test
-      dbCapacity: 1
-      dbComputeModel: Serverless
-      dbEdition: GeneralPurpose
-      dbFamily: Gen4
-      dbName: learndb
-      dbZoneRedundant: false
-      endip: 0.0.0.0
-      location: southcentralus
-      resourceGroupHName: abellearndbrg
-      servername: abellearndbserver1
-      servicePrincipal: http://AbelDeployPrincipal
-      servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
-      startip: 0.0.0.0
-      storageContainerName: uploaddata
-      webAppName: abellearndbwebapp
-      webAppSku: B1
-      webStorageAccountName: abellearndbstorage
-      webStorageAccountRegion: southcentralus
-      webStorageAccountSku: Standard_LRS
+ - stage: Deploy to Dev
+   jobs:
+   - job: DeployEnvironment
+     pool:
+       name: Hosted Windows 2019 with VS2019
+     variables:
+       adminlogin: abel
+       azureSubscriptionName: ca-abewan-demo-Test
+       dbCapacity: 1
+       dbComputeModel: Serverless
+       dbEdition: GeneralPurpose
+       dbFamily: Gen4
+       dbName: learndb
+       dbZoneRedundant: false
+       endip: 0.0.0.0
+       location: southcentralus
+       resourceGroupHName: abellearndbrg2
+       servername: abellearndbserver1
+       servicePrincipal: http://AbelDeployPrincipal
+       servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
+       startip: 0.0.0.0
+       storageContainerName: uploaddata
+       webAppName: abellearndbwebapp
+       webAppSku: B1
+       webStorageAccountName: abellearndbstorage
+       webStorageAccountRegion: southcentralus
+       webStorageAccountSku: Standard_LRS
+    steps:
+    - download: current
+      artifact: drop
+      patterns: '**/*'
+
+    - task: AzureCLI@1
+      displayName: 'Azure CLI: Deploy infrastructure for Infra Tools'
+      inputs:
+        azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+        scriptPath: '$(Pipeline.Workspace)/drop/provisionInfraTools.bash'
+        addSpnToEnvironment: true
