@@ -80,11 +80,6 @@ stages:
         dbZoneRedundant: false
         webAppName: abellearndbwebappdev
         webAppSku: B1
-        webStorageAccountName: abellearnwebstoragedev
-        webStorageAccountRegion: southcentralus
-        webStorageAccountSku: Standard_LRS
-        storageContainerName: abellearnstoragedev
-        dbComputeModel: Serverless
     environment: 'courses-dev'
     strategy:
       runOnce:
@@ -98,7 +93,7 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogindev) -adminPassword $(adminPasswordDev) -servername $(servernamedev) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppNameDev) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -webStorageAccountName $(webStorageAccountNameDev) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerNameDev) -dbComputeModel $(dbComputeModel)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogindev) -adminPassword $(adminPasswordDev) -servername $(servernamedev) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppNameDev) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace)'
           
           - task: AzureRmWebAppDeployment@4
             inputs:
@@ -131,11 +126,6 @@ stages:
         dbZoneRedundant: false
         webAppName: abellearndbwebappprod
         webAppSku: B1
-        webStorageAccountName: abellearnwebstorageprod
-        webStorageAccountRegion: southcentralus
-        webStorageAccountSku: Standard_LRS
-        storageContainerName: abellearnstorageprod
-        dbComputeModel: Serverless
     environment: 'courses-prod'
     strategy:
       runOnce:
@@ -149,7 +139,7 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminloginprod) -adminPassword $(adminPasswordProd) -servername $(servernameprod) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppNameProd -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -webStorageAccountName $(webStorageAccountNameProd) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerNameProd) -dbComputeModel $(dbComputeModel)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminloginprod) -adminPassword $(adminPasswordProd) -servername $(servernameprod) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppNameProd -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace)'
           
           - task: AzureRmWebAppDeployment@4
             inputs:

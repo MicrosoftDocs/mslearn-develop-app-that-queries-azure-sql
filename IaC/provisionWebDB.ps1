@@ -77,27 +77,7 @@ param(
 
     [Parameter(Mandatory = $True)]
     [string]
-    $releaseDirectory,
-
-    [Parameter(Mandatory = $True)]
-    [string]
-    $webStorageAccountName,
-
-    [Parameter(Mandatory = $True)]
-    [string]
-    $webStorageAccountRegion,
-
-    [Parameter(Mandatory = $True)]
-    [string]
-    $webStorageAccountSku,
-
-    [Parameter(Mandatory = $True)]
-    [string]
-    $storageContainerName,
-
-    [Parameter(Mandatory = $True)]
-    [string]
-    $dbComputeModel
+    $releaseDirectory
 )
 
 #region function to upload default data
