@@ -107,7 +107,7 @@ stages:
             inputs:
               azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
               AuthenticationType: 'server'
-              ServerName: '$(servernamedev).database.windows.net'
+              ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
               SqlUsername: '$(adminlogin)'
               SqlPassword: '$(adminPasswordDev)'
