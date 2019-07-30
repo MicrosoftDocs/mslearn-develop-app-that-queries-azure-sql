@@ -116,7 +116,7 @@ stages:
     - task: PowerShell@2
       displayName : 'Provision DB and Web'
       inputs:
-        filePath: '$(System.DefaultWorkingDirectory)/_LearnDB-ASP.NETCore-CI/drop/IaC/provisionWebDB.ps1'
+        filePath: '$(System.DefaultWorkingDirectory)/drop/IaC/provisionWebDB.ps1'
         arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPassword) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Agent.ReleaseDirectory) -webStorageAccountName $(webStorageAccountName) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerName) -dbComputeModel $(dbComputeModel)'
 
     - task: AzureRmWebAppDeployment@4
