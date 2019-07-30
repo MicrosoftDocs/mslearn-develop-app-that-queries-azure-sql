@@ -172,6 +172,6 @@ stages:
               SqlPassword: '$(adminPasswordProd)'
               deployType: 'DacpacTask'
               DeploymentAction: 'Publish'
-              DacpacFile: '$(Pipeline.Worksppace)/drop/Database/bin/Debug/Database.dacpac'
+              DacpacFile: '$(Pipeline.Workspace)/drop/Database/bin/Debug/Database.dacpac'
               IpDetectionMethod: 'AutoDetect'
           
