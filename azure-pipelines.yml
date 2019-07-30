@@ -122,7 +122,58 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(System.DefaultWorkingDirectory)/_LearnDB-ASP.NETCore-CI/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPassword) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Agent.ReleaseDirectory) -webStorageAccountName $(webStorageAccountName) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerName) -dbComputeModel $(dbComputeModel)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogindev) -adminPassword $(adminPasswordDev) -servername $(servernamedev) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppNameDev) -webAppSku $(webAppSku) -releaseDirectory $(Agent.ReleaseDirectory) -webStorageAccountName $(webStorageAccountName) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerNameDev) -dbComputeModel $(dbComputeModel)'
+          
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+              appType: 'webApp'
+              WebAppName: '$(webAppName)'
+              packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+
+- stage: DeployToProd
+  jobs:
+  - deployment: DeployInfraWebDB
+    displayName: Deploy Infra Web and DB
+    pool:
+      name: Hosted Windows 2019 with VS2019
+      variables:
+        adminlogin: abel
+        azureSubscriptionName: ca-abewan-demo-Test
+        dbCapacity: 1
+        dbComputeModel: Serverless
+        dbEdition: GeneralPurpose
+        dbFamily: Gen4
+        dbName: learndb
+        dbZoneRedundant: false
+        endip: 0.0.0.0
+        location: southcentralus
+        resourceGroupHName: abellearndbrg2
+        servername: abellearndbserver1
+        servicePrincipal: http://AbelDeployPrincipal
+        servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
+        startip: 0.0.0.0
+        storageContainerName: uploaddata
+        webAppName: abellearndbwebapp
+        webAppSku: B1
+        webStorageAccountName: abellearndbstorage
+        webStorageAccountRegion: southcentralus
+        webStorageAccountSku: Standard_LRS
+    environment: 'courses-prod'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
+
+          - task: PowerShell@2
+            displayName : 'Provision DB and Web'
+            inputs:
+              filePath: '$(System.DefaultWorkingDirectory)/_LearnDB-ASP.NETCore-CI/drop/IaC/provisionWebDB.ps1'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminloginProd) -adminPassword $(adminPasswordProd) -servername $(servernameProd) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppNameProd) -webAppSku $(webAppSku) -releaseDirectory $(Agent.ReleaseDirectory) -webStorageAccountName $(webStorageAccountNameProd) -webStorageAccountRegion $(webStorageAccountRegion) -webStorageAccountSku $(webStorageAccountSku) -storageContainerName $(storageContainerNameProd) -dbComputeModel $(dbComputeModel)'
           
           - task: AzureRmWebAppDeployment@4
             inputs:
