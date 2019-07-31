@@ -1,4 +1,4 @@
-name: $(Date:yyyMMdd)$(Rev:.r
+name: $(Date:yyyMMdd)$(Rev:.r)
 trigger:
   batch: false # batch changes if true (the default); start a new build for every push if false
   branches:
