@@ -71,6 +71,5 @@ BEGIN
 	
 	 WHERE CourseName = 'Chemistry';
 	
-	GO
 END
 
