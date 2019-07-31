@@ -309,5 +309,11 @@ Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -
 Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile studyplans.csv -tableName StudyPlans
 #endregion
 
-# add command to set up backup
+# add command to set up 
+Write-Output "installing az power shell..."
+Install-Module -Name Az -AllowClobber -Scope CurrentUser
+Write-Output "done installing az powershell"
+
+Write-Output "creating backup plan..."
 Set-AzSqlInstanceDatabaseBackupShortTermRetentionPolicy -ResourceGroupName $resourceGroupName -InstanceName $servername -DatabaseName $dbName -RetentionDays 35
+Write-Output "done creating backup plan"
