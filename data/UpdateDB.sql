@@ -1,76 +1,76 @@
-﻿---- This adds the column Teacher to the Courses table if it
----- does not exist
---IF NOT EXISTS (
---  SELECT * 
---  FROM   sys.columns 
---  WHERE  object_id = OBJECT_ID(N'[dbo].[Courses]') 
---         AND name = 'Teacher'
---)
---BEGIN
---    ALTER TABLE dbo.Courses ADD Teacher VARCHAR(50) NULL;
---END
---GO
+﻿-- this adds the column teacher to the courses table if it
+-- does not exist
+if not exists (
+  select * 
+  from   sys.columns 
+  where  object_id = object_id(n'[dbo].[courses]') 
+         and name = 'teacher'
+)
+begin
+    alter table dbo.courses add teacher varchar(50) null;
+end
+go
 
----- This populates the Teacher column with data if none exists
---IF NOT EXISTS (
---	SELECT * 
---	FROM [dbo].[Courses]
---	WHERE Teacher IS NOT NULL
---)
---BEGIN
---	UPDATE dbo.Courses
+-- this populates the teacher column with data if none exists
+if not exists (
+	select * 
+	from [dbo].[courses]
+	where teacher is not null
+)
+begin
+	update dbo.courses
 	
---	   SET Teacher = 'Frieda Joseph'
+	   set teacher = 'frieda joseph'
 	
---	 WHERE CourseName = 'Computer Science';
+	 where coursename = 'computer science';
 	
---	UPDATE dbo.Courses
+	update dbo.courses
 	
---	   SET Teacher = 'Lenore Wilder'
+	   set teacher = 'lenore wilder'
 	
---	 WHERE CourseName = 'Maths with Computing';
+	 where coursename = 'maths with computing';
 	
---	UPDATE dbo.Courses
+	update dbo.courses
 	
---	   SET Teacher = 'Benita Cortez'
+	   set teacher = 'benita cortez'
 	
---	 WHERE CourseName = 'Maths with Physics';
+	 where coursename = 'maths with physics';
 	
---	UPDATE dbo.Courses
+	update dbo.courses
 	
---	   SET Teacher = 'Jodie Webb'
+	   set teacher = 'jodie webb'
 	
---	 WHERE CourseName = 'Computer Science with Physics';
+	 where coursename = 'computer science with physics';
 	
---	UPDATE dbo.Courses
+	update dbo.courses
 	
---	   SET Teacher = 'Dominique Barton'
+	   set teacher = 'dominique barton'
 	
---	 WHERE CourseName = 'Maths with Chemistry';
+	 where coursename = 'maths with chemistry';
 	
---	UPDATE dbo.Courses
+	update dbo.courses
 	
---	   SET Teacher = 'Jolene FLetcher'
+	   set teacher = 'jolene fletcher'
 	
---	 WHERE CourseName = 'Physics with Chemistry';
+	 where coursename = 'physics with chemistry';
 	
---	UPDATE dbo.Courses
+	update dbo.courses
 	
---	   SET Teacher = 'Liza Greene'
+	   set teacher = 'liza greene'
 	
---	 WHERE CourseName = 'Maths';
+	 where coursename = 'maths';
 	
---	UPDATE dbo.Courses
+	update dbo.courses
 	
---	   SET Teacher = 'Cornelia Ellis'
+	   set teacher = 'cornelia ellis'
 	
---	 WHERE CourseName = 'Physics';
+	 where coursename = 'physics';
 	
---	UPDATE dbo.Courses
+	update dbo.courses
 	
---	   SET Teacher = 'Mike Chambliss'
+	   set teacher = 'mike chambliss'
 	
---	 WHERE CourseName = 'Chemistry';
+	 where coursename = 'chemistry';
 	
---END
---GO
+end
+go
