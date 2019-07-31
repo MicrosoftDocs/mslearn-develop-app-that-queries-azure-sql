@@ -168,7 +168,7 @@ stages:
 - stage: DeployToDev
   jobs:
   - deployment: DeployInfraWebDB
-    displayName: Deploy Infra Web and DB
+    displayName: Deploy Web and DB
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
@@ -302,6 +302,7 @@ stages:
               IpDetectionMethod: 'AutoDetect'
           
           - task: SqlAzureDacpacDeployment@1
+            displayName: Generate Auto Gen DB Update Script
             inputs:
               azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
               AuthenticationType: 'server'
@@ -327,8 +328,8 @@ stages:
 
 - stage: DeployToProd
   jobs:
-  - deployment: DeployInfraWebDB
-    displayName: Deploy Infra Web and DB
+  - deployment: DeployWebDB
+    displayName: Deploy Web and DB
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
