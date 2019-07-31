@@ -28,7 +28,7 @@ namespace CoursesWebApp.Models
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 SqlCommand cmd = new SqlCommand(
-                    @"SELECT c.CourseName, m.ModuleTitle, s.ModuleSequence
+                    @"SELECT c.CourseName, m.ModuleTitle, c.Teacher, s.ModuleSequence
                     FROM dbo.Courses c JOIN dbo.StudyPlans s
                     ON c.CourseID = s.CourseID
                     JOIN dbo.Modules m
@@ -44,7 +44,8 @@ namespace CoursesWebApp.Models
                     string courseName = rdr["CourseName"].ToString();
                     string moduleTitle = rdr["ModuleTitle"].ToString();
                     int moduleSequence = Convert.ToInt32(rdr["ModuleSequence"]);
-                    CoursesAndModules course = new CoursesAndModules(courseName, moduleTitle, moduleSequence);
+                    string teacher = rdr["Teacher"].ToString();
+                    CoursesAndModules course = new CoursesAndModules(courseName, moduleTitle, teacher, moduleSequence);
                     courseList.Add(course);
                 }
 

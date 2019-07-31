@@ -68,4 +68,7 @@
     <Build Include="dbo\Tables\Modules.sql" />
     <Build Include="dbo\Tables\StudyPlans.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Post-Deployment\Script.PostDeployment1.sql" />
+  </ItemGroup>
 </Project>
