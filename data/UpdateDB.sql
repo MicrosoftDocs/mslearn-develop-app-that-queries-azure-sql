@@ -9,6 +9,7 @@ IF NOT EXISTS (
 BEGIN
     ALTER TABLE dbo.Courses ADD Teacher VARCHAR(60) NULL;
 END
+GO
 
 -- This populates the Teacher column with data if none exists
 IF NOT EXISTS (
@@ -72,4 +73,4 @@ BEGIN
 	 WHERE CourseName = 'Chemistry';
 	
 END
-
+GO
