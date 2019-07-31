@@ -57,10 +57,10 @@ stages:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
 
-- stage: VerifyDBDeploymentDevScript
+- stage: Provision Dev Infra
   jobs:
-  - deployment: VerifyDBDeploymentDevScript
-    displayName: Verify DB Deployment Script to Dev
+  - deployment: ProvisionDevInfra
+    displayName: Provision Dev Infra: Web and DB
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
@@ -80,7 +80,45 @@ stages:
       dbZoneRedundant: false
       webAppName: abellearndbwebappdev
       webAppSku: B1
-    environment: 'courses-dev-checkdbscript'
+    environment: 'courses-dev-provisionInfra'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
+
+          - task: PowerShell@2
+            displayName : 'Provision DB and Web'
+            inputs:
+              filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace)'
+          
+- stage: DBAVerificationDev
+  jobs:
+  - deployment: DBAVerificationDev
+    displayName: DBA Verify DB Deployment Script to Dev
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    variables:
+      servicePrincipal: http://AbelDeployPrincipal
+      servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
+      azureSubscriptionName: ca-abewan-demo-test
+      resourceGroupName: abellearndbrg3
+      location: southcentralus
+      adminlogin: abel
+      servername: abellearndbserverdev
+      startip: 0.0.0.0
+      endip: 0.0.0.0
+      dbName: learndb
+      dbEdition: GeneralPurpose
+      dbFamily: Gen4
+      dbCapacity: 1
+      dbZoneRedundant: false
+      webAppName: abellearndbwebappdev
+      webAppSku: B1
+    environment: 'courses-dev-dbaverification'
     strategy:
       runOnce:
         deploy:
@@ -159,12 +197,6 @@ stages:
             artifact: drop
             patterns: '**/*'
 
-          - task: PowerShell@2
-            displayName : 'Provision DB and Web'
-            inputs:
-              filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace)'
-          
           - task: AzureRmWebAppDeployment@4
             inputs:
               ConnectionType: 'AzureRM'
@@ -186,10 +218,10 @@ stages:
               DacpacFile: '$(Pipeline.Workspace)/drop/Database/bin/Debug/Database.dacpac'
               IpDetectionMethod: 'AutoDetect'
 
-- stage: VerifyDBDeploymentProdScript
+- stage: ProvisionInfraToProd
   jobs:
-  - deployment: VerifyDBDeploymentProdScript
-    displayName: Verify DB Deployment Script to Prod
+  - deployment: ProvisionProdInfra
+    displayName: Provision Prod Infra Web and DB
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
@@ -209,7 +241,7 @@ stages:
       dbZoneRedundant: false
       webAppName: abellearndbwebappprod
       webAppSku: B1
-    environment: 'courses-dev-checkdbscript'
+    environment: 'courses-prod-provisionInfra'
     strategy:
       runOnce:
         deploy:
@@ -217,6 +249,57 @@ stages:
           - download: current
             artifact: drop
             patterns: '**/*'
+
+          - task: PowerShell@2
+            displayName : 'Provision DB and Web'
+            inputs:
+              filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordProd) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace)'
+
+- stage: DBAVerificationProd
+  jobs:
+  - deployment: DBAVerificationProd
+    displayName: DDBA Verify DB Deployment Script to Prod
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    variables:
+      servicePrincipal: http://AbelDeployPrincipal
+      servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
+      azureSubscriptionName: ca-abewan-demo-test
+      resourceGroupName: abellearndbrg3
+      location: southcentralus
+      adminlogin: abel
+      servername: abellearndbserverprod
+      startip: 0.0.0.0
+      endip: 0.0.0.0
+      dbName: learndb
+      dbEdition: GeneralPurpose
+      dbFamily: Gen4
+      dbCapacity: 1
+      dbZoneRedundant: false
+      webAppName: abellearndbwebappprod
+      webAppSku: B1
+    environment: 'courses-prod-dbaverification'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
+          
+          - task: SqlAzureDacpacDeployment@1
+            displayName: Run Update DB Script from DBA
+            inputs:
+              azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+              AuthenticationType: 'server'
+              ServerName: '$(servername).database.windows.net'
+              DatabaseName: '$(dbName)'
+              SqlUsername: '$(adminlogin)'
+              SqlPassword: '$(adminPasswordDev)'
+              deployType: 'SqlTask'
+              SqlFile: '$(Pipeline.Workspace)/drop/data/UpdateDB.sql'
+              IpDetectionMethod: 'AutoDetect'
           
           - task: SqlAzureDacpacDeployment@1
             inputs:
@@ -274,12 +357,6 @@ stages:
             artifact: drop
             patterns: '**/*'
 
-          - task: PowerShell@2
-            displayName : 'Provision DB and Web'
-            inputs:
-              filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordProd) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace)'
-          
           - task: AzureRmWebAppDeployment@4
             inputs:
               ConnectionType: 'AzureRM'
@@ -299,5 +376,4 @@ stages:
               deployType: 'DacpacTask'
               DeploymentAction: 'Publish'
               DacpacFile: '$(Pipeline.Workspace)/drop/Database/bin/Debug/Database.dacpac'
-              IpDetectionMethod: 'AutoDetect'
-          
+              IpDetectionMethod: 'AutoDetect'          
