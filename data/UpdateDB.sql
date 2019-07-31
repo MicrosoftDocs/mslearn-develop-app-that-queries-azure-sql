@@ -3,7 +3,7 @@
 if not exists (
   select * 
   from   sys.columns 
-  where  object_id = object_id(n'[dbo].[courses]') 
+  where  object_id = object_id('[dbo].[Courses]') 
          and name = 'teacher'
 )
 begin
