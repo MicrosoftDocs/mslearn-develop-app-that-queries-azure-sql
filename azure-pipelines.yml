@@ -57,7 +57,7 @@ stages:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
 
-- stage: Provision Dev Infra
+- stage: ProvisionDevInfra
   jobs:
   - deployment: ProvisionDevInfra
     displayName: Provision Dev Infra Web and DB
@@ -218,7 +218,7 @@ stages:
               DacpacFile: '$(Pipeline.Workspace)/drop/Database/bin/Debug/Database.dacpac'
               IpDetectionMethod: 'AutoDetect'
 
-- stage: ProvisionInfraToProd
+- stage: ProvisionProdInfra
   jobs:
   - deployment: ProvisionProdInfra
     displayName: Provision Prod Infra Web and DB
