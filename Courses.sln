@@ -12,11 +12,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{0073F12F-0
 		data\courses.csv = data\courses.csv
 		data\modules.csv = data\modules.csv
 		data\studyplans.csv = data\studyplans.csv
+		data\UpdateDB.sql = data\UpdateDB.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IaC", "IaC", "{34E25FC2-9FE3-4275-A5AC-AEE7EABE4866}"
 	ProjectSection(SolutionItems) = preProject
-		infra\provisionWebDB.ps1 = infra\provisionWebDB.ps1
+		IaC\provisionWebDB.ps1 = IaC\provisionWebDB.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2647A27A-C0E5-4F99-BECF-DD81EAD98E83}"
+	ProjectSection(SolutionItems) = preProject
+		azure-pipelines.yml = azure-pipelines.yml
 	EndProjectSection
 EndProject
 Global
