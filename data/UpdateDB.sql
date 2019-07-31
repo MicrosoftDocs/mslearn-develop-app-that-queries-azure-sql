@@ -7,7 +7,7 @@ IF NOT EXISTS (
          AND name = 'Teacher'
 )
 BEGIN
-    ALTER TABLE dbo.Courses ADD Teacher VARCHAR(60) NULL;
+    ALTER TABLE dbo.Courses ADD Teacher VARCHAR(50) NULL;
 END
 GO
 
