@@ -58,7 +58,7 @@ begin
 	
 	   set teacher = 'liza greene'
 	
-	 where coursename = 'maths';
+	 where coursename = 'math';
 	
 	update dbo.courses
 	

@@ -57,7 +57,7 @@ BEGIN
 	
 	   SET Teacher = 'Liza Greene'
 	
-	 WHERE CourseName = 'Maths';
+	 WHERE CourseName = 'Math';
 	
 	UPDATE dbo.Courses
 	
