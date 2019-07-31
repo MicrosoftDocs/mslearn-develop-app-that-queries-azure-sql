@@ -60,7 +60,7 @@ stages:
 - stage: Provision Dev Infra
   jobs:
   - deployment: ProvisionDevInfra
-    displayName: Provision Dev Infra: Web and DB
+    displayName: Provision Dev Infra Web and DB
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
