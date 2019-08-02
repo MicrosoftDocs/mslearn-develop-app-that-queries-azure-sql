@@ -289,17 +289,17 @@ Write-Output "done creating db tables"
 
 
 
-#region upload default data to tables if needed
+# #region upload default data to tables if needed
 
-# installs sql server command line tools via chocolatey
-#
-Write-Output "installing sql server command line tools via chocolatey..."
-cinst sqlserver-cmdlineutils
-Write-Output "done installing sql server command line tools"
+# # installs sql server command line tools via chocolatey
+# #
+# Write-Output "installing sql server command line tools via chocolatey..."
+# cinst sqlserver-cmdlineutils
+# Write-Output "done installing sql server command line tools"
 
-Write-Output "refreshing environment..."
-refreshenv
-Write-Output "done refreshing environment"
+# Write-Output "refreshing environment..."
+# refreshenv
+# Write-Output "done refreshing environment"
 
 # Uploading default data for tables
 #
@@ -310,10 +310,12 @@ Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -
 #endregion
 
 # add command to set up 
-Write-Output "installing az power shell..."
-Install-Module -Name Az -AllowClobber -Scope CurrentUser
-Write-Output "done installing az powershell"
+Write-Output "installing az.sql power shell..."
+Install-Module -Name Az.Sql -AllowClobber -Scope CurrentUser
+Write-Output "done installing az.sql powershell"
 
 Write-Output "creating backup plan..."
 Set-AzSqlInstanceDatabaseBackupShortTermRetentionPolicy -ResourceGroupName $resourceGroupName -InstanceName $servername -DatabaseName $dbName -RetentionDays 35
 Write-Output "done creating backup plan"
+
+
