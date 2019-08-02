@@ -105,6 +105,7 @@ stages:
               ScriptType: 'FilePath'
               ScriptPath: '$(Pipeline.Workspace)/drop/IaC/configureWithPS.ps1'
               ScriptArguments: '-resourceGroupName $(resourceGroupName) -servername $(servername) -dbName $(dbName)'
+              azurePowerShellVersion: 'LatestVersion'
 
 - stage: DBAVerificationDev
   jobs:
