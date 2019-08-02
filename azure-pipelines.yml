@@ -99,14 +99,6 @@ stages:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
               arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace)'
           
-          - task: AzurePowerShell@4
-            inputs:
-              azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
-              ScriptType: 'FilePath'
-              ScriptPath: '$(Pipeline.Workspace)/drop/IaC/configureWithPS.ps1'
-              ScriptArguments: '-resourceGroupName $(resourceGroupName) -servername $(servername) -dbName $(dbName)'
-              azurePowerShellVersion: 'LatestVersion'
-
 - stage: DBAVerificationDev
   jobs:
   - deployment: DBAVerificationDev
