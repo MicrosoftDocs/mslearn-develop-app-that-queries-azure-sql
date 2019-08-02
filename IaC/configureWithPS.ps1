@@ -16,9 +16,11 @@ param(
     $dbName
 )
 
-# Uninstall AzureRM
-#
-Uninstall-AzureRm
+# # Uninstall AzureRM
+# #
+# Write-Output "uninstalling AzureRM..."
+# Uninstall-AzureRm
+# Write-Output "done uninstalling AzureRM"
 
 # setup backup for sql server
 #
