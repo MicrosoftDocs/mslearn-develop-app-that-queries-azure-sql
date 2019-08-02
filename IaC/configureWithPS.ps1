@@ -13,14 +13,29 @@ param(
 
     [Parameter(Mandatory = $True)]
     [string]
-    $dbName
+    $dbName,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $servicePrincipalSecret,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $servicePrincipal,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $servicePrincipalTenantId
 )
 
-# # Uninstall AzureRM
-# #
-# Write-Output "uninstalling AzureRM..."
-# Uninstall-AzureRm
-# Write-Output "done uninstalling AzureRM"
+
+# Login to Azure
+#
+Write-Outpout "Logging into Azure with service principal..."
+$passwd = ConvertTo-SecureString $servicePrincipalSecret -AsPlainText -Force
+$pscredential = New-Object System.Management.Automation.PSCredential($servicePrincipal, $passwd)
+Connect-AzAccount -ServicePrincipal -Credential $pscredential -TenantId $servicePrincipalTenantId
+Write-Output "Done logging into Azure"
 
 # setup backup for sql server
 #
