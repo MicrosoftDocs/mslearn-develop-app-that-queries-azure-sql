@@ -29,13 +29,13 @@ param(
 )
 
 
-# Login to Azure
-#
-Write-Output "Logging into Azure with service principal..."
-$passwd = ConvertTo-SecureString $servicePrincipalSecret -AsPlainText -Force
-$pscredential = New-Object System.Management.Automation.PSCredential($servicePrincipal, $passwd)
-Connect-AzAccount -ServicePrincipal -Credential $pscredential -TenantId $servicePrincipalTenantId
-Write-Output "Done logging into Azure"
+# # Login to Azure
+# #
+# Write-Output "Logging into Azure with service principal..."
+# $passwd = ConvertTo-SecureString $servicePrincipalSecret -AsPlainText -Force
+# $pscredential = New-Object System.Management.Automation.PSCredential($servicePrincipal, $passwd)
+# Connect-AzAccount -ServicePrincipal -Credential $pscredential -TenantId $servicePrincipalTenantId
+# Write-Output "Done logging into Azure"
 
 # setup backup for sql server
 #
@@ -43,8 +43,8 @@ Write-Output "installing az.sql power shell..."
 Install-Module -Name Az.Sql -AllowClobber -Scope CurrentUser -Force
 Write-Output "done installing az.sql powershell"
 
-Write-Output "creating backup plan..."
+Write-Output "creating short term backup plan..."
 Set-AzSqlDatabaseBackupShortTermRetentionPolicy -ResourceGroupName $resourceGroupName -ServerName $servername -DatabaseName $dbName -RetentionDays 35
-Write-Output "done creating backup plan"
+Write-Output "done creating short term backup plan"
 
 
