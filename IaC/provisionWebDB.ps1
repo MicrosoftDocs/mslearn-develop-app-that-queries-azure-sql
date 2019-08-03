@@ -77,7 +77,15 @@ param(
 
     [Parameter(Mandatory = $True)]
     [string]
-    $releaseDirectory
+    $releaseDirectory,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $failoverName,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $partnerServerName
 )
 
 #region function to upload default data
@@ -271,6 +279,7 @@ Write-Output "Done setting connection string"
 #region create db tables
 
 # this block creates the initial tables if needed
+#
 Write-Output "creating db tables"
 Invoke-Sqlcmd `
     -ConnectionString "Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
@@ -289,17 +298,7 @@ Write-Output "done creating db tables"
 
 
 
-# #region upload default data to tables if needed
-
-# # installs sql server command line tools via chocolatey
-# #
-# Write-Output "installing sql server command line tools via chocolatey..."
-# cinst sqlserver-cmdlineutils
-# Write-Output "done installing sql server command line tools"
-
-# Write-Output "refreshing environment..."
-# refreshenv
-# Write-Output "done refreshing environment"
+#region upload default data to tables if needed
 
 # Uploading default data for tables
 #
@@ -307,4 +306,19 @@ Write-Output "done creating db tables"
 Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile courses.csv -tableName Courses
 Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile modules.csv -tableName Modules
 Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile studyplans.csv -tableName StudyPlans
+#endregion
+
+#region create db failover
+
+# create failover group
+#
+Write-Output "creating failover group..."
+az sql failover-group create `
+    --name $failoverName `
+    --partner-server $partnerServerName `
+    --resource-group $resourceGroupName `
+    --server $servername `
+    --failover-policy Automatic `
+    --add-db $dbName
+Write-Output "done creating failover group"
 #endregion
