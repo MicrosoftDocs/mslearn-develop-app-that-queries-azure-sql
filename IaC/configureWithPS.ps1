@@ -40,5 +40,5 @@ Write-Output "done creating short term backup plan"
 
 Write-Output "creating long term backup retention..."
 Set-AzSqlDatabaseBackupLongTermRetentionPolicy -ServerName $servername -DatabaseName $dbName -ResourceGroupName $resourceGroupName -WeeklyRetention P12W
-Write-Outut "done creating long term backup retention"
+Write-Output "done creating long term backup retention"
 
