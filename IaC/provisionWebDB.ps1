@@ -312,6 +312,38 @@ Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -
 
 # create failover group
 #
+# Create a logical sql server in the resource group
+# 
+Write-Output "Creating sql server for failover..."
+try {
+    az sql server create `
+    --name $partnerServerName `
+    --resource-group $resourceGroupName `
+    --location $location  `
+    --admin-user $adminlogin `
+    --admin-password $adminPassword
+}
+catch {
+    Write-Output "Partner SQL Server already exists"
+}
+Write-Output "Done creating sql server"
+
+# Configure a firewall rule for the server
+#
+Write-Output "Creating firewall rule for partner sql server..."
+try {
+    az sql server firewall-rule create `
+    --resource-group $resourceGroupName `
+    --server $partnerServerName `
+    -n AllowYourIp `
+    --start-ip-address $startip `
+    --end-ip-address $endip 
+}
+catch {
+    Write-Output "firewall rule already existsfor partner sql server"
+}
+Write-Output "Done creating firewall rule for partner sql server"
+
 Write-Output "creating failover group..."
 az sql failover-group create `
     --name $failoverName `
