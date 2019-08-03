@@ -44,7 +44,7 @@ Install-Module -Name Az.Sql -AllowClobber -Scope CurrentUser -Force
 Write-Output "done installing az.sql powershell"
 
 Write-Output "creating backup plan..."
-Set-AzSqlInstanceDatabaseBackupShortTermRetentionPolicy -ResourceGroupName $resourceGroupName -InstanceName $servername -DatabaseName $dbName -RetentionDays 35
+Set-AzSqlDatabaseBackupShortTermRetentionPolicy -ResourceGroupName $resourceGroupName -ServerName $servername -DatabaseName $dbName -RetentionDays 35
 Write-Output "done creating backup plan"
 
 
