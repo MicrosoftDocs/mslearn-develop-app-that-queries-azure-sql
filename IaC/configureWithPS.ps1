@@ -28,15 +28,6 @@ param(
     $servicePrincipalTenantId
 )
 
-
-# # Login to Azure
-# #
-# Write-Output "Logging into Azure with service principal..."
-# $passwd = ConvertTo-SecureString $servicePrincipalSecret -AsPlainText -Force
-# $pscredential = New-Object System.Management.Automation.PSCredential($servicePrincipal, $passwd)
-# Connect-AzAccount -ServicePrincipal -Credential $pscredential -TenantId $servicePrincipalTenantId
-# Write-Output "Done logging into Azure"
-
 # setup backup for sql server
 #
 Write-Output "installing az.sql power shell..."
@@ -47,4 +38,7 @@ Write-Output "creating short term backup plan..."
 Set-AzSqlDatabaseBackupShortTermRetentionPolicy -ResourceGroupName $resourceGroupName -ServerName $servername -DatabaseName $dbName -RetentionDays 35
 Write-Output "done creating short term backup plan"
 
+Write-Output "creating long term backup retention..."
+ii.	Set-AzSqlDatabaseBackupLongTermRetentionPolicy -ServerName $servername -DatabaseName $dbName -ResourceGroupName $resourceGroupName -WeeklyRetention P12W
+Write-Outut "done creating long term backup retention"
 
