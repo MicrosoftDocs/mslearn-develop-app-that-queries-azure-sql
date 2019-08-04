@@ -90,6 +90,8 @@ stages:
       trafficManagerProfileName: abellearndbtmdev
       uniqueDNSName: abellearndbuniquedev
       node2Location: westus
+      storageAccountName: abellearndbstoragedev
+      storageAccountSku: Standard_LRS
     environment: 'courses-dev-provisionInfra'
     strategy:
       runOnce:
@@ -103,7 +105,7 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location) -storageAccountName $(storageAccountName) -storageAccountSku $(storageAccountSku)'
 
           - task: AzurePowerShell@4
             displayName: 'Configure Environment with PowerShell'
@@ -264,6 +266,8 @@ stages:
       trafficManagerProfileName: abellearndbtmdev 
       uniqueDNSName: abellearndbuniquedev
       node2Location: westus
+      storageAccountName: abellearndbstoragedev
+      storageAccountSku: Standard_LRS
     environment: 'courses-prod-provisionInfra'
     strategy:
       runOnce:
@@ -277,7 +281,7 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location) -storageAccountName $(storageAccountName) -storageAccountSku $(storageAccountSku)'
 
           - task: AzurePowerShell@4
             displayName: 'Configure Environment with PowerShell'

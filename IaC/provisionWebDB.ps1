@@ -101,7 +101,16 @@ param(
 
     [Parameter(Mandatory = $True)]
     [string]
-    $node2Location
+    $node2Location,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $storageAccountName,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $storageAccountSku
+
 )
 
 #region function to upload default data
@@ -511,7 +520,9 @@ Write-Output "Done adding traffic manager endpoint for node 2"
 Write-Output ""
 #endregion
 
-#region Monitor and Tune
+
+
+#region Monitor
 
 # this creates an instance of appliction insight for node 1
 #
@@ -586,4 +597,61 @@ az webapp config appsettings set `
                     XDT_MicrosoftApplicationInsights_BaseExtension=~1
 Write-Output "done setting and configuring application insight for node 2"
 Write-Output ""
+#endregion
+
+
+#region Tune
+
+# Create storage for monitoring
+# 
+Write-Output "create a storage account for monitoring and tuning"
+az storage account create `
+    --name $storageAccountName `
+    --location $location `
+    --resource-group $resourceGroupName `
+    --sku $storageAccountSku
+Write-Output "done creating storage account for monitoring and tuning"
+Write-Output ""
+
+# enable database audit
+#
+Write-Output "enabling auditing for db servers 1..."
+az sql db audit-policy update `
+    --resource-group $resourceGroupName `
+    --server $servername `
+    --name $dbName `
+    --state Enabled `
+    --storage-account $storageAccountName
+Write-Output "done enabling auditing for db server 1"
+Write-Output ""
+
+Write-Output "enabling auditing for db servers 2..."
+az sql db audit-policy update `
+    --resource-group $resourceGroupName `
+    --server $partnerServerName `
+    --name $dbName `
+    --state Enabled `
+    --storage-account $storageAccountName
+Write-Output "done enabling auditing for db server 2"
+Write-Output ""
+
+# Enable threat detection
+#
+Write-Output "enabling threat detection for db server 1..."
+az sql db threat-policy update `
+    --resource-group $resourceGroupName `
+    --server $servername `
+    --name $dbName `
+    --state Enabled `
+    --storage-account $storageAccountName
+Write-Output "done enabling threat detection for db server 1"
+
+Write-Output "enabling threat detection for db server 2..."
+az sql db threat-policy update `
+    --resource-group $resourceGroupName `
+    --server $partnerServerName `
+    --name $dbName `
+    --state Enabled `
+    --storage-account $storageAccountName
+Write-Output "done enabling threat detection for db server 2"
 #endregion
