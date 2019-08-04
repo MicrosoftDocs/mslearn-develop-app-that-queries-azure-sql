@@ -412,7 +412,7 @@ Write-Output "done creating app service plan for 2nd node"
 Write-Output "creating web app for 2nd node..."
 try {
     az webapp create `
-    --name $webAppName + "2" `
+    --name $($webAppName + "2") `
     --plan $("$webAppName" + "plan2") `
     --resource-group $resourceGroupName
 
@@ -422,7 +422,7 @@ catch {
 }
 Write-Output "done creating web app for node 2"
 
-Write-Output "Setting connection string for node 2.."
+Write-Output "Setting connection string for node 2..."
 az webapp config connection-string set `
     --name $($webAppName + "2") `
     --connection-string-type "SQLAzure" `
