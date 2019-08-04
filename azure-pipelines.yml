@@ -83,7 +83,7 @@ stages:
       dbCapacity: 1
       dbZoneRedundant: false
       webAppName: abellearndbwebappdev
-      webAppSku: B1
+      webAppSku: S1
       failoverName: learndbserverfailoverdev
       partnerServerName: learndbserver2dev
       partnerServerLocation: westus2
@@ -257,7 +257,7 @@ stages:
       dbCapacity: 1
       dbZoneRedundant: false
       webAppName: abellearndbwebappprod
-      webAppSku: B1
+      webAppSku: S1
       failoverName: learndbserverfailoverprod
       partnerServerName: learndbserver2prod
       partnerServerLocation: westus2
