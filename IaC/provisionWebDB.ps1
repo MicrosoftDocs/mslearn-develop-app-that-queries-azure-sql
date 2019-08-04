@@ -424,7 +424,7 @@ Write-Output "done creating web app for node 2"
 
 Write-Output "Setting connection string for node 2.."
 az webapp config connection-string set `
-    --name $webAppName + "2" `
+    --name $($webAppName + "2") `
     --connection-string-type "SQLAzure" `
     --resource-group $resourceGroupName `
     --settings DefaultConnection="Server=tcp:$failoverName.database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
@@ -438,7 +438,7 @@ $node1 = $(az webapp show `
 Write-Output "node 1: "
 Write-Output $node1
 
-$node2 = $(az webapp $webAppName + "2" `
+$node2 = $(az webapp $($webAppName + "2") `
 --name coursesappwest `
 --resource-group $resourceGroupName `
 | ConvertFrom-Json)
