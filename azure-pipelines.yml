@@ -263,10 +263,10 @@ stages:
       failoverName: learndbserverfailoverprod
       partnerServerName: learndbserver2prod
       partnerServerLocation: westus2
-      trafficManagerProfileName: abellearndbtmdev 
-      uniqueDNSName: abellearndbuniquedev
+      trafficManagerProfileName: abellearndbtmprod
+      uniqueDNSName: abellearndbuniqueprod
       node2Location: westus
-      storageAccountName: abellearndbstoragedev
+      storageAccountName: abellearndbstorageprod
       storageAccountSku: Standard_LRS
     environment: 'courses-prod-provisionInfra'
     strategy:
