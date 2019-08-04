@@ -466,5 +466,5 @@ az network traffic-manager endpoint create `
     --target-resource-id $node2.id `
     --priority 1 `
     --endpoint-status Enabled
-Write-Output "Done adding traffic manager endpoint for node 1"
+Write-Output "Done adding traffic manager endpoint for node 2"
 #endregion
