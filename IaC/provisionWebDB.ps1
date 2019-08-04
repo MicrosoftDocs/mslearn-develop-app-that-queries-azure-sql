@@ -406,6 +406,7 @@ try {
 }
 catch {
     Write-Output "app service already exists for 2nd node."
+    Write-Output $_
 }
 Write-Output "done creating app service plan for 2nd node"
 
@@ -419,6 +420,7 @@ try {
 }
 catch {
     Write-Output "web app already exists for node 2"
+    Write-Output $_
 }
 Write-Output "done creating web app for node 2"
 
