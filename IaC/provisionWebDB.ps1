@@ -399,7 +399,7 @@ Write-Output "done creating traffic manager"
 Write-Output "creating app service plan for 2nd node..."
 try {
     az appservice plan create `
-    --name $("$webAppName" + "plan2") `
+    --name $($webAppName + "plan2") `
     --resource-group $resourceGroupName `
     --sku $webAppSku `
     --location $node2Location
@@ -413,7 +413,7 @@ Write-Output "creating web app for 2nd node..."
 try {
     az webapp create `
     --name $($webAppName + "2") `
-    --plan $("$webAppName" + "plan2") `
+    --plan $($webAppName + "plan2") `
     --resource-group $resourceGroupName
 
 }
