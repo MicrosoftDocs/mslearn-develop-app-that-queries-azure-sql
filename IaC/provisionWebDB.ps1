@@ -625,16 +625,6 @@ az sql db audit-policy update `
 Write-Output "done enabling auditing for db server 1"
 Write-Output ""
 
-Write-Output "enabling auditing for db servers 2..."
-az sql db audit-policy update `
-    --resource-group $resourceGroupName `
-    --server $partnerServerName `
-    --name $dbName `
-    --state Enabled `
-    --storage-account $storageAccountName
-Write-Output "done enabling auditing for db server 2"
-Write-Output ""
-
 # Enable threat detection
 #
 Write-Output "enabling threat detection for db server 1..."
