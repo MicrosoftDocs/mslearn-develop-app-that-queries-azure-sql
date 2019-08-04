@@ -153,6 +153,7 @@ function Upload-DefaultData {
         Write-Output "Data already exists for $tableName"
     }    
     Write-Output "done checking data for $tableName"
+    Write-Output ""
 }
 #endregion
 
@@ -192,6 +193,7 @@ az group create `
     --name $resourceGroupName `
     --location $location
 Write-Output "Done creating resource group"
+Write-Output ""
 #endregion
 
 
@@ -213,6 +215,7 @@ catch {
     Write-Output "SQL Server already exists"
 }
 Write-Output "Done creating sql server"
+Write-Output ""
 
 # Configure a firewall rule for the server
 #
@@ -229,6 +232,7 @@ catch {
     Write-Output "firewall rule already exists"
 }
 Write-Output "Done creating firewall rule for sql server"
+Write-Output ""
 
 # Create a database in the server with zone redundancy as false
 #
@@ -247,6 +251,7 @@ catch {
     Write-Output "sql db already exists"
 }
 Write-Output "Done creating sql db"
+Write-Output ""
 #endregion
 
 
@@ -266,6 +271,7 @@ catch {
     Write-Output "app service already exists."
 }
 Write-Output "done creating app service plan"
+Write-Output ""
 
 Write-Output "creating web app..."
 try {
@@ -279,6 +285,7 @@ catch {
     Write-Output "web app already exists"
 }
 Write-Output "done creating web app"
+Write-Output ""
 
 Write-Output "Setting connection string.."
 az webapp config connection-string set `
@@ -288,6 +295,7 @@ az webapp config connection-string set `
     --settings DefaultConnection="Server=tcp:$($servername).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
 Write-Output "Done setting connection string"
+Write-Output ""
 #endregion
 
 
@@ -310,6 +318,7 @@ Invoke-Sqlcmd `
     -Query "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='StudyPlans' and xtype='U') CREATE TABLE StudyPlans ( CourseID INT NOT NULL, ModuleCode VARCHAR(5) NOT NULL, ModuleSequence INT NOT NULL, PRIMARY KEY ( CourseID, ModuleCode) );"
 
 Write-Output "done creating db tables"
+Write-Output ""
 #endregion
 
 
@@ -324,10 +333,10 @@ Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -
 Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -userPassword $adminPassword -releaseDirectoryName $releaseDirectory -uploadFile studyplans.csv -tableName StudyPlans
 #endregion
 
+
+
 #region create db failover
 
-# create failover group
-#
 # Create a logical sql server in the resource group
 # 
 Write-Output "Creating sql server for failover..."
@@ -342,7 +351,8 @@ try {
 catch {
     Write-Output "Partner SQL Server already exists"
 }
-Write-Output "Done creating sql server"
+Write-Output "Done creating sql server for failover"
+Write-Output ""
 
 # Configure a firewall rule for the server
 #
@@ -359,7 +369,10 @@ catch {
     Write-Output "firewall rule already existsfor partner sql server"
 }
 Write-Output "Done creating firewall rule for partner sql server"
+Write-Output ""
 
+# Create failover group
+#
 Write-Output "creating failover group..."
 az sql failover-group create `
     --name $failoverName `
@@ -369,7 +382,10 @@ az sql failover-group create `
     --failover-policy Automatic `
     --add-db $dbName
 Write-Output "done creating failover group"
+Write-Output ""
 
+# Update connection string to point ot failover
+#
 Write-Output "Setting connection string to failover..."
 az webapp config connection-string set `
     --name $webAppName `
@@ -378,7 +394,10 @@ az webapp config connection-string set `
     --settings DefaultConnection="Server=tcp:$($failoverName).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
 Write-Output "Done setting connection string"
+Write-Output ""
 #endregion
+
+
 
 #region traffic manager
 
@@ -395,7 +414,10 @@ az network traffic-manager profile create `
               --ttl 30 `
               --port 80
 Write-Output "done creating traffic manager"
+Write-Output ""
 
+# Create app service plan for 2nd node
+#
 Write-Output "creating app service plan for 2nd node..."
 try {
     az appservice plan create `
@@ -409,7 +431,10 @@ catch {
     Write-Output $_
 }
 Write-Output "done creating app service plan for 2nd node"
+Write-Output ""
 
+# Create 2nd node app service
+#
 Write-Output "creating web app for 2nd node..."
 try {
     az webapp create `
@@ -423,7 +448,10 @@ catch {
     Write-Output $_
 }
 Write-Output "done creating web app for node 2"
+Write-Output ""
 
+# Set connection string for node 2
+#
 Write-Output "Setting connection string for node 2..."
 az webapp config connection-string set `
     --name $($webAppName + "2") `
@@ -431,7 +459,10 @@ az webapp config connection-string set `
     --resource-group $resourceGroupName `
     --settings DefaultConnection="Server=tcp:$failoverName.database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 Write-Output "Done setting connection string for node 2"
+Write-Output ""
 
+# get full id for node 1 and 2
+#
 Write-Output "getting id for node 1 and 2..."
 $node1 = $(az webapp show `
     --name $webAppName `
@@ -439,6 +470,7 @@ $node1 = $(az webapp show `
     | ConvertFrom-Json)
 Write-Output "node 1: "
 Write-Output $node1
+Write-Output ""
 
 $node2 = $(az webapp show `
 --name $($webAppName + "2") `
@@ -446,8 +478,12 @@ $node2 = $(az webapp show `
 | ConvertFrom-Json)
 Write-Output "node 2:"
 Write-Output $node2
+Write-Output ""
 Write-Output "done getting id for node 2"
+Write-Output ""
 
+# Add traffic manager endpoint for node 1
+#
 Write-Output "Add traffic manager endpoint for node 1..."
 az network traffic-manager endpoint create `
     --name endpoint1 `
@@ -458,7 +494,10 @@ az network traffic-manager endpoint create `
     --priority 1 `
     --endpoint-status Enabled
 Write-Output "Done adding traffic manager endpoint for node 1"
+Write-Output ""
 
+# Add traffic manager endpoint for node 2
+#
 Write-Output "Add traffic manager endpoint for node 2..."
 az network traffic-manager endpoint create `
     --name endpoint2 `
@@ -469,4 +508,82 @@ az network traffic-manager endpoint create `
     --priority 2 `
     --endpoint-status Enabled
 Write-Output "Done adding traffic manager endpoint for node 2"
+Write-Output ""
+#endregion
+
+#region Monitor and Tune
+
+# this creates an instance of appliction insight for node 1
+#
+Write-Output "creating application insight for the node1..."
+$appInsightCreateResponse=$(az resource create `
+    --resource-group $resourceGroupName `
+    --resource-type "Microsoft.Insights/components" `
+    --name $($webAppName + "AppInsight") `
+    --location $location `
+    --properties '{\"Application_Type\":\"web\"}') | ConvertFrom-Json
+Write-Output "done creating app insight: $appInsightCreateResponse"
+Write-Output ""
+
+# this gets the instrumentation key from the create response
+#
+Write-Output "getting instrumentation key from the create response..."
+$instrumentationKey = $appInsightCreateResponse.properties.InstrumentationKey
+Write-Output "done getting instrumentation key"
+Write-Output ""
+
+# this sets application insight to web app
+#
+Write-Output "setting and configuring application insight for node 1..."
+az webapp config appsettings set `
+    --resource-group $resourceGroupName `
+    --name $webAppName `
+    --slot-settings APPINSIGHTS_INSTRUMENTATIONKEY=$instrumentationKey `
+                    ApplicastionInsightsAgent_EXTENSION_VERSION=~2 `
+                    XDT_MicrosoftApplicationInsights_Mode=recommended `
+                    APPINSIGHTS_PROFILERFEATURE_VERSION=1.0.0 `
+                    DiagnosticServices_EXTENSION_VERSION=~3 `
+                    APPINSIGHTS_SNAPSHOTFEATURE_VERSION=1.0.0 `
+                    SnapshotDebugger_EXTENSION_VERSION=~1 `
+                    InstrumentationEngine_EXTENSION_VERSION=~1 `
+                    XDT_MicrosoftApplicationInsights_BaseExtension=~1
+Write-Output "done setting and configuring application insight for node 1"
+Write-Output ""
+
+# this creates an instance of appliction insight for node 2
+#
+Write-Output "creating application insight for the node2..."
+$appInsightCreateResponse=$(az resource create `
+    --resource-group $resourceGroupName `
+    --resource-type "Microsoft.Insights/components" `
+    --name $($webAppName + "2AppInsight") `
+    --location $location `
+    --properties '{\"Application_Type\":\"web\"}') | ConvertFrom-Json
+Write-Output "done creating app insight: $appInsightCreateResponse"
+Write-Output ""
+
+# this gets the instrumentation key from the create response
+#
+Write-Output "getting instrumentation key from the create response..."
+$instrumentationKey = $appInsightCreateResponse.properties.InstrumentationKey
+Write-Output "done getting instrumentation key"
+Write-Output ""
+
+# this sets application insight to web app
+#
+Write-Output "setting and configuring application insight for node 1..."
+az webapp config appsettings set `
+    --resource-group $resourceGroupName `
+    --name $($webAppName + "2") `
+    --slot-settings APPINSIGHTS_INSTRUMENTATIONKEY=$instrumentationKey `
+                    ApplicastionInsightsAgent_EXTENSION_VERSION=~2 `
+                    XDT_MicrosoftApplicationInsights_Mode=recommended `
+                    APPINSIGHTS_PROFILERFEATURE_VERSION=1.0.0 `
+                    DiagnosticServices_EXTENSION_VERSION=~3 `
+                    APPINSIGHTS_SNAPSHOTFEATURE_VERSION=1.0.0 `
+                    SnapshotDebugger_EXTENSION_VERSION=~1 `
+                    InstrumentationEngine_EXTENSION_VERSION=~1 `
+                    XDT_MicrosoftApplicationInsights_BaseExtension=~1
+Write-Output "done setting and configuring application insight for node 2"
+Write-Output ""
 #endregion
