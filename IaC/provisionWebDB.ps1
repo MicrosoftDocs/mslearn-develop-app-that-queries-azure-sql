@@ -440,8 +440,8 @@ $node1 = $(az webapp show `
 Write-Output "node 1: "
 Write-Output $node1
 
-$node2 = $(az webapp $($webAppName + "2") `
---name coursesappwest `
+$node2 = $(az webapp show `
+--name $($webAppName + "2") `
 --resource-group $resourceGroupName `
 | ConvertFrom-Json)
 Write-Output "node 2:"
