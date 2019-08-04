@@ -515,14 +515,14 @@ Write-Output ""
 
 # this creates an instance of appliction insight for node 1
 #
-Write-Output "creating application insight for the node1..."
+Write-Output "creating application insight for the node1 and 2..."
 $appInsightCreateResponse=$(az resource create `
     --resource-group $resourceGroupName `
     --resource-type "Microsoft.Insights/components" `
     --name $($webAppName + "AppInsight") `
     --location $location `
     --properties '{\"Application_Type\":\"web\"}') | ConvertFrom-Json
-Write-Output "done creating app insight: $appInsightCreateResponse"
+Write-Output "done creating app insight for node 1 and 2: $appInsightCreateResponse"
 Write-Output ""
 
 # this gets the instrumentation key from the create response
@@ -539,7 +539,7 @@ az webapp config appsettings set `
     --resource-group $resourceGroupName `
     --name $webAppName `
     --slot-settings APPINSIGHTS_INSTRUMENTATIONKEY=$instrumentationKey `
-                    ApplicastionInsightsAgent_EXTENSION_VERSION=~2 `
+                    ApplicationInsightsAgent_EXTENSION_VERSION=~2 `
                     XDT_MicrosoftApplicationInsights_Mode=recommended `
                     APPINSIGHTS_PROFILERFEATURE_VERSION=1.0.0 `
                     DiagnosticServices_EXTENSION_VERSION=~3 `
@@ -550,24 +550,24 @@ az webapp config appsettings set `
 Write-Output "done setting and configuring application insight for node 1"
 Write-Output ""
 
-# this creates an instance of appliction insight for node 2
-#
-Write-Output "creating application insight for the node2..."
-$appInsightCreateResponse=$(az resource create `
-    --resource-group $resourceGroupName `
-    --resource-type "Microsoft.Insights/components" `
-    --name $($webAppName + "2AppInsight") `
-    --location $location `
-    --properties '{\"Application_Type\":\"web\"}') | ConvertFrom-Json
-Write-Output "done creating app insight: $appInsightCreateResponse"
-Write-Output ""
+# # this creates an instance of appliction insight for node 2
+# #
+# Write-Output "creating application insight for the node2..."
+# $appInsightCreateResponse=$(az resource create `
+#     --resource-group $resourceGroupName `
+#     --resource-type "Microsoft.Insights/components" `
+#     --name $($webAppName + "2AppInsight") `
+#     --location $location `
+#     --properties '{\"Application_Type\":\"web\"}') | ConvertFrom-Json
+# Write-Output "done creating app insight: $appInsightCreateResponse"
+# Write-Output ""
 
-# this gets the instrumentation key from the create response
-#
-Write-Output "getting instrumentation key from the create response..."
-$instrumentationKey = $appInsightCreateResponse.properties.InstrumentationKey
-Write-Output "done getting instrumentation key"
-Write-Output ""
+# # this gets the instrumentation key from the create response
+# #
+# Write-Output "getting instrumentation key from the create response..."
+# $instrumentationKey = $appInsightCreateResponse.properties.InstrumentationKey
+# Write-Output "done getting instrumentation key"
+# Write-Output ""
 
 # this sets application insight to web app
 #
@@ -576,7 +576,7 @@ az webapp config appsettings set `
     --resource-group $resourceGroupName `
     --name $($webAppName + "2") `
     --slot-settings APPINSIGHTS_INSTRUMENTATIONKEY=$instrumentationKey `
-                    ApplicastionInsightsAgent_EXTENSION_VERSION=~2 `
+                    ApplicationInsightsAgent_EXTENSION_VERSION=~2 `
                     XDT_MicrosoftApplicationInsights_Mode=recommended `
                     APPINSIGHTS_PROFILERFEATURE_VERSION=1.0.0 `
                     DiagnosticServices_EXTENSION_VERSION=~3 `
