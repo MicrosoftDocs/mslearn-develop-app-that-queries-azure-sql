@@ -363,7 +363,7 @@ az webapp config connection-string set `
     --name $webAppName `
     --connection-string-type "SQLAzure" `
     --resource-group $resourceGroupName `
-    --settings DefaultConnection="Server=tcp:$($partnerServerName).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+    --settings DefaultConnection="Server=tcp:$($failoverName).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
 Write-Output "Done setting connection string"
 #endregion
