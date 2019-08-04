@@ -466,7 +466,7 @@ az network traffic-manager endpoint create `
     --profile-name $trafficManagerProfileName `
     --type azureEndpoints `
     --target-resource-id $node2.id `
-    --priority 1 `
+    --priority 2 `
     --endpoint-status Enabled
 Write-Output "Done adding traffic manager endpoint for node 2"
 #endregion
