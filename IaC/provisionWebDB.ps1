@@ -85,7 +85,11 @@ param(
 
     [Parameter(Mandatory = $True)]
     [string]
-    $partnerServerName
+    $partnerServerName,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $partnerServerLocation
 )
 
 #region function to upload default data
@@ -319,7 +323,7 @@ try {
     az sql server create `
     --name $partnerServerName `
     --resource-group $resourceGroupName `
-    --location $location  `
+    --location $partnerServerLocation  `
     --admin-user $adminlogin `
     --admin-password $adminPassword
 }

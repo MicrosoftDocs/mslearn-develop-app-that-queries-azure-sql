@@ -84,8 +84,9 @@ stages:
       dbZoneRedundant: false
       webAppName: abellearndbwebappdev
       webAppSku: B1
-      failoverName: learndbserverfailover
-      partnerServerName: learndbserver2
+      failoverName: learndbserverfailoverdev
+      partnerServerName: learndbserver2dev
+      partnerServerLocation: westus2
     environment: 'courses-dev-provisionInfra'
     strategy:
       runOnce:
@@ -99,7 +100,7 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation)'
 
           - task: AzurePowerShell@4
             displayName: 'Configure Environment with PowerShell'
@@ -256,6 +257,9 @@ stages:
       dbZoneRedundant: false
       webAppName: abellearndbwebappprod
       webAppSku: B1
+      failoverName: learndbserverfailoverprod
+      partnerServerName: learndbserver2prod
+      partnerServerLocation: westus2      
     environment: 'courses-prod-provisionInfra'
     strategy:
       runOnce:
@@ -269,8 +273,17 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordProd) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation)'
 
+          - task: AzurePowerShell@4
+            displayName: 'Configure Environment with PowerShell'
+            inputs:
+              azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+              ScriptType: 'FilePath'
+              ScriptPath: '$(Pipeline.Workspace)/drop/IaC/configureWithPS.ps1'
+              ScriptArguments: '-resourceGroupName $(resourceGroupName) -servername $(servername) -dbName $(dbName) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipal $(servicePrincipal) -servicePrincipalTenantId $(servicePrincipalTenantId)'
+              azurePowerShellVersion: 'LatestVersion'
+          
 - stage: DBAVerificationProd
   jobs:
   - deployment: DBAVerificationProd
