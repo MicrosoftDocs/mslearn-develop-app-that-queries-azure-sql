@@ -89,7 +89,19 @@ param(
 
     [Parameter(Mandatory = $True)]
     [string]
-    $partnerServerLocation
+    $partnerServerLocation,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $trafficManagerProfileName,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $uniqueDNSName,
+
+    [Parameter(Mandatory = $True)]
+    [string]
+    $node2Location
 )
 
 #region function to upload default data
@@ -366,4 +378,93 @@ az webapp config connection-string set `
     --settings DefaultConnection="Server=tcp:$($failoverName).database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
 Write-Output "Done setting connection string"
+#endregion
+
+#region traffic manager
+
+# create traffic manager
+#
+Write-Output "creating traffic manager..."
+az network traffic-manager profile create `
+              --name $trafficManagerProfileName `
+              --resource-group $resourceGroupName `
+              --routing-method Priority `
+              --path "/" `
+              --protocol HTTPS `
+              --unique-dns-name $uniqueDNSName `
+              --ttl 30 `
+              --port 80
+Write-Output "done creating traffic manager"
+
+Write-Output "creating app service plan for 2nd node..."
+try {
+    az appservice plan create `
+    --name $("$webAppName" + "plan2") `
+    --resource-group $resourceGroupName `
+    --sku $webAppSku `
+    --location $node2Location
+}
+catch {
+    Write-Output "app service already exists for 2nd node."
+}
+Write-Output "done creating app service plan for 2nd node"
+
+Write-Output "creating web app for 2nd node..."
+try {
+    az webapp create `
+    --name $webAppName + "2" `
+    --plan $("$webAppName" + "plan2") `
+    --resource-group $resourceGroupName
+
+}
+catch {
+    Write-Output "web app already exists for node 2"
+}
+Write-Output "done creating web app for node 2"
+
+Write-Output "Setting connection string for node 2.."
+az webapp config connection-string set `
+    --name $webAppName + "2" `
+    --connection-string-type "SQLAzure" `
+    --resource-group $resourceGroupName `
+    --settings DefaultConnection="Server=tcp:$failoverName.database.windows.net,1433;Initial Catalog=$dbName;Persist Security Info=False;User ID=$adminLogin;Password=$adminPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+Write-Output "Done setting connection string for node 2"
+
+Write-Output "getting id for node 1 and 2..."
+$node1 = $(az webapp show `
+    --name $webAppName `
+    --resource-group $resourceGroupName `
+    | ConvertFrom-Json)
+Write-Output "node 1: "
+Write-Output $node1
+
+$node2 = $(az webapp $webAppName + "2" `
+--name coursesappwest `
+--resource-group $resourceGroupName `
+| ConvertFrom-Json)
+Write-Output "node 2:"
+Write-Output $node2
+Write-Output "done getting id for node 2"
+
+Write-Output "Add traffic manager endpoint for node 1..."
+az network traffic-manager endpoint create `
+    --name endpoint1 `
+    --resource-group $resourceGroupName `
+    --profile-name $trafficManagerProfileName `
+    --type azureEndpoints `
+    --target-resource-id $node1.id `
+    --priority 1 `
+    --endpoint-status Enabled
+Write-Output "Done adding traffic manager endpoint for node 1"
+
+Write-Output "Add traffic manager endpoint for node 2..."
+az network traffic-manager endpoint create `
+    --name endpoint2 `
+    --resource-group $resourceGroupName `
+    --profile-name $trafficManagerProfileName `
+    --type azureEndpoints `
+    --target-resource-id $node2.id `
+    --priority 1 `
+    --endpoint-status Enabled
+Write-Output "Done adding traffic manager endpoint for node 1"
 #endregion

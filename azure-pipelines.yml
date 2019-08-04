@@ -87,6 +87,9 @@ stages:
       failoverName: learndbserverfailoverdev
       partnerServerName: learndbserver2dev
       partnerServerLocation: westus2
+      trafficManagerProfileName: abellearndbtmdev
+      uniqueDNSName: abellearndbuniquedev
+      node2Location: westus2
     environment: 'courses-dev-provisionInfra'
     strategy:
       runOnce:
@@ -100,7 +103,7 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location)'
 
           - task: AzurePowerShell@4
             displayName: 'Configure Environment with PowerShell'
@@ -214,6 +217,7 @@ stages:
             patterns: '**/*'
 
           - task: AzureRmWebAppDeployment@4
+            displayName: "Deploy Node 1"
             inputs:
               ConnectionType: 'AzureRM'
               azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
@@ -221,7 +225,17 @@ stages:
               WebAppName: '$(webAppName)'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
 
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy Node 2'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+              appType: 'webApp'
+              WebAppName: '$(webAppName)2'
+              packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
+
           - task: SqlAzureDacpacDeployment@1
+            displayName: 'Deploy SQL Schema'
             inputs:
               azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
               AuthenticationType: 'server'
@@ -259,7 +273,11 @@ stages:
       webAppSku: B1
       failoverName: learndbserverfailoverprod
       partnerServerName: learndbserver2prod
-      partnerServerLocation: westus2      
+      partnerServerLocation: westus2
+      trafficManagerProfileName: abellearndbtmdev 
+      uniqueDNSName: abellearndbuniquedev
+      node2Location: westus2
+
     environment: 'courses-prod-provisionInfra'
     strategy:
       runOnce:
@@ -273,7 +291,7 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location)'
 
           - task: AzurePowerShell@4
             displayName: 'Configure Environment with PowerShell'
@@ -387,14 +405,25 @@ stages:
             patterns: '**/*'
 
           - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy Node 1'
             inputs:
               ConnectionType: 'AzureRM'
               azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
               appType: 'webApp'
               WebAppName: '$(webAppName)'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
-              
+
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy Node 2'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+              appType: 'webApp'
+              WebAppName: '$(webAppName)2'
+              packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
+
           - task: SqlAzureDacpacDeployment@1
+            displayName: 'Deploy SQL Schema'
             inputs:
               azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
               AuthenticationType: 'server'
