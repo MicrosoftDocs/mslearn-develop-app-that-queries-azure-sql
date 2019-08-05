@@ -3,6 +3,10 @@ trigger:
   batch: false # batch changes if true (the default); start a new build for every push if false
   branches:
     include: [ main ] # branch names which will trigger a build
+variables:
+  servicePrincipal: http://AbelDeployPrincipal
+  servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
+  azureSubscriptionName: ca-abewan-demo-test
 stages:
 - stage: Build
   jobs:
@@ -68,9 +72,6 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      servicePrincipal: http://AbelDeployPrincipal
-      servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
-      azureSubscriptionName: ca-abewan-demo-test
       resourceGroupName: abellearndbrg3
       location: southcentralus
       adminlogin: abel
