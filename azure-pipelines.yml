@@ -151,7 +151,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: Generate Auto Gen DB Update Script
             inputs:
-              azureSubscription: 'ca-abewan-demo-test (e97f6c4e-c830-479b-81ad-1aff1dd07470)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
