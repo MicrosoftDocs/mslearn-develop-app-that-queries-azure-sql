@@ -89,8 +89,8 @@ stages:
       adminlogin: carlrab
       servername: coursesdbserverdev
       webAppName: coursesdbwebappdev
-      failoverName: learndbserverfailoverdev
-      partnerServerName: learndbserver2dev
+      failoverName: coursesdbserverfailoverdev
+      partnerServerName: coursesdbserver2dev
       trafficManagerProfileName: coursesdbtmdev
       uniqueDNSName: coursesdbuniquedev
       storageAccountName: coursesdbstoragedev
@@ -235,8 +235,8 @@ stages:
       adminlogin: carlrab
       servername: coursesdbserverprod
       webAppName: coursesdbwebappprod
-      failoverName: learndbserverfailoverprod
-      partnerServerName: learndbserver2prod
+      failoverName: coursesdbserverfailoverprod
+      partnerServerName: coursesdbserver2prod
       trafficManagerProfileName: coursesdbtmprod
       uniqueDNSName: coursesdbuniqueprod
       storageAccountName: coursesdbstorageprod
