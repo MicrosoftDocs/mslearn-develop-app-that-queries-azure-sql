@@ -7,11 +7,11 @@ variables:
   servicePrincipal: http://carlsspn
   servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
   azureSubscriptionName: SQL DB Content
-  resourceGroupName: carlrabsqldbrg3
+  resourceGroupName: carllearndbrg3
   location: southcentralus
   startip: 0.0.0.0
   endip: 0.0.0.0
-  dbName: coursesdb
+  dbName: learndb
   dbEdition: GeneralPurpose
   dbFamily: Gen4
   dbCapacity: 1
@@ -86,14 +86,14 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carlrab
-      servername: coursesdbserverdev
-      webAppName: coursesdbwebappdev
-      failoverName: coursesdbserverfailoverdev
-      partnerServerName: coursesdbserver2dev
-      trafficManagerProfileName: coursesdbtmdev
-      uniqueDNSName: coursesdbuniquedev
-      storageAccountName: coursesdbstoragedev
+      adminlogin: carl
+      servername: carllearndbserverdev
+      webAppName: carllearndbwebappdev
+      failoverName: learndbserverfailoverdev
+      partnerServerName: learndbserver2dev
+      trafficManagerProfileName: carllearndbtmdev
+      uniqueDNSName: carllearndbuniquedev
+      storageAccountName: carllearndbstoragedev
     environment: 'courses-dev-provisionInfra'
     strategy:
       runOnce:
@@ -107,7 +107,7 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName "$(azureSubscriptionName)" -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location) -storageAccountName $(storageAccountName) -storageAccountSku $(storageAccountSku)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location) -storageAccountName $(storageAccountName) -storageAccountSku $(storageAccountSku)'
 
           - task: AzurePowerShell@4
             displayName: 'Configure Environment with PowerShell'
@@ -125,8 +125,8 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carlrab
-      servername: coursesdbserverdev
+      adminlogin: carl
+      servername: carllearndbserverdev
     environment: 'courses-dev-dbaverification'
     strategy:
       runOnce:
@@ -181,9 +181,9 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carlrab
-      servername: coursesdbserverdev
-      webAppName: coursesdbwebappdev
+      adminlogin: carl
+      servername: carllearndbserverdev
+      webAppName: carllearndbwebappdev
     environment: 'courses-dev'
     strategy:
       runOnce:
@@ -232,14 +232,14 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carlrab
-      servername: coursesdbserverprod
-      webAppName: coursesdbwebappprod
-      failoverName: coursesdbserverfailoverprod
-      partnerServerName: coursesdbserver2prod
-      trafficManagerProfileName: coursesdbtmprod
-      uniqueDNSName: coursesdbuniqueprod
-      storageAccountName: coursesdbstorageprod
+      adminlogin: carl
+      servername: carllearndbserverprod
+      webAppName: carllearndbwebappprod
+      failoverName: learndbserverfailoverprod
+      partnerServerName: learndbserver2prod
+      trafficManagerProfileName: carllearndbtmprod
+      uniqueDNSName: carllearndbuniqueprod
+      storageAccountName: carllearndbstorageprod
     environment: 'courses-prod-provisionInfra'
     strategy:
       runOnce:
@@ -253,7 +253,7 @@ stages:
             displayName : 'Provision DB and Web'
             inputs:
               filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
-              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName "$(azureSubscriptionName)"" -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location) -storageAccountName $(storageAccountName) -storageAccountSku $(storageAccountSku)'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName $(azureSubscriptionName) -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location) -storageAccountName $(storageAccountName) -storageAccountSku $(storageAccountSku)'
 
           - task: AzurePowerShell@4
             displayName: 'Configure Environment with PowerShell'
@@ -271,8 +271,8 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carlrab
-      servername: coursesdbserverprod
+      adminlogin: carl
+      servername: carllearndbserverprod
     environment: 'courses-prod-dbaverification'
     strategy:
       runOnce:
@@ -327,9 +327,9 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carlrab
-      servername: coursesdbserverprod
-      webAppName: coursesdbwebappprod
+      adminlogin: carl
+      servername: carllearndbserverprod
+      webAppName: carllearndbwebappprod
       webAppSku: S1
     environment: 'courses-prod'
     strategy:
