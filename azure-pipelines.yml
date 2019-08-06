@@ -4,14 +4,14 @@ trigger:
   branches:
     include: [ main ] # branch names which will trigger a build
 variables:
-  servicePrincipal: http://AbelDeployPrincipal
+  servicePrincipal: http://CarlDeployPrincipal
   servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
-  azureSubscriptionName: ca-abewan-demo-test
-  resourceGroupName: abellearndbrg3
+  azureSubscriptionName: SQL DB Content
+  resourceGroupName: carlrabsqldbrg3
   location: southcentralus
   startip: 0.0.0.0
   endip: 0.0.0.0
-  dbName: learndb
+  dbName: coursesdb
   dbEdition: GeneralPurpose
   dbFamily: Gen4
   dbCapacity: 1
@@ -86,14 +86,14 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: abel
-      servername: abellearndbserverdev
-      webAppName: abellearndbwebappdev
+      adminlogin: carlrab
+      servername: coursesdbserverdev
+      webAppName: coursesdbwebappdev
       failoverName: learndbserverfailoverdev
       partnerServerName: learndbserver2dev
-      trafficManagerProfileName: abellearndbtmdev
-      uniqueDNSName: abellearndbuniquedev
-      storageAccountName: abellearndbstoragedev
+      trafficManagerProfileName: coursesdbtmdev
+      uniqueDNSName: coursesdbuniquedev
+      storageAccountName: coursesdbstoragedev
     environment: 'courses-dev-provisionInfra'
     strategy:
       runOnce:
@@ -112,7 +112,7 @@ stages:
           - task: AzurePowerShell@4
             displayName: 'Configure Environment with PowerShell'
             inputs:
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               ScriptType: 'FilePath'
               ScriptPath: '$(Pipeline.Workspace)/drop/IaC/configureWithPS.ps1'
               ScriptArguments: '-resourceGroupName $(resourceGroupName) -servername $(servername) -dbName $(dbName) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipal $(servicePrincipal) -servicePrincipalTenantId $(servicePrincipalTenantId)'
@@ -126,7 +126,7 @@ stages:
       name: Hosted Windows 2019 with VS2019
     variables:
       adminlogin: carlrab
-      servername: abellearndbserverdev
+      servername: coursesdbserverdev
     environment: 'courses-dev-dbaverification'
     strategy:
       runOnce:
@@ -139,7 +139,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: Run Update DB Script from DBA
             inputs:
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
@@ -152,7 +152,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: Generate Auto Gen DB Update Script
             inputs:
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
@@ -181,9 +181,9 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: abel
-      servername: abellearndbserverdev
-      webAppName: abellearndbwebappdev
+      adminlogin: carlrab
+      servername: coursesdbserverdev
+      webAppName: coursesdbwebappdev
     environment: 'courses-dev'
     strategy:
       runOnce:
@@ -197,7 +197,7 @@ stages:
             displayName: "Deploy Node 1"
             inputs:
               ConnectionType: 'AzureRM'
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               appType: 'webApp'
               WebAppName: '$(webAppName)'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
@@ -206,7 +206,7 @@ stages:
             displayName: 'Deploy Node 2'
             inputs:
               ConnectionType: 'AzureRM'
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               appType: 'webApp'
               WebAppName: '$(webAppName)2'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
@@ -214,7 +214,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: 'Deploy SQL Schema'
             inputs:
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
@@ -232,14 +232,14 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: abel
-      servername: abellearndbserverprod
-      webAppName: abellearndbwebappprod
+      adminlogin: carlrab
+      servername: coursesdbserverprod
+      webAppName: coursesdbwebappprod
       failoverName: learndbserverfailoverprod
       partnerServerName: learndbserver2prod
-      trafficManagerProfileName: abellearndbtmprod
-      uniqueDNSName: abellearndbuniqueprod
-      storageAccountName: abellearndbstorageprod
+      trafficManagerProfileName: coursesdbtmprod
+      uniqueDNSName: coursesdbuniqueprod
+      storageAccountName: coursesdbstorageprod
     environment: 'courses-prod-provisionInfra'
     strategy:
       runOnce:
@@ -258,7 +258,7 @@ stages:
           - task: AzurePowerShell@4
             displayName: 'Configure Environment with PowerShell'
             inputs:
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               ScriptType: 'FilePath'
               ScriptPath: '$(Pipeline.Workspace)/drop/IaC/configureWithPS.ps1'
               ScriptArguments: '-resourceGroupName $(resourceGroupName) -servername $(servername) -dbName $(dbName) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipal $(servicePrincipal) -servicePrincipalTenantId $(servicePrincipalTenantId)'
@@ -271,8 +271,8 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: abel
-      servername: abellearndbserverprod
+      adminlogin: carlrab
+      servername: coursesdbserverprod
     environment: 'courses-prod-dbaverification'
     strategy:
       runOnce:
@@ -285,7 +285,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: Run Update DB Script from DBA
             inputs:
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
@@ -298,7 +298,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: Generate Auto Gen DB Update Script
             inputs:
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
@@ -327,9 +327,9 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: abel
-      servername: abellearndbserverprod
-      webAppName: abellearndbwebappprod
+      adminlogin: carlrab
+      servername: coursesdbserverprod
+      webAppName: coursesdbwebappprod
       webAppSku: B1
     environment: 'courses-prod'
     strategy:
@@ -344,7 +344,7 @@ stages:
             displayName: 'Deploy Node 1'
             inputs:
               ConnectionType: 'AzureRM'
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               appType: 'webApp'
               WebAppName: '$(webAppName)'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
@@ -353,7 +353,7 @@ stages:
             displayName: 'Deploy Node 2'
             inputs:
               ConnectionType: 'AzureRM'
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               appType: 'webApp'
               WebAppName: '$(webAppName)2'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
@@ -361,7 +361,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: 'Deploy SQL Schema'
             inputs:
-              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
