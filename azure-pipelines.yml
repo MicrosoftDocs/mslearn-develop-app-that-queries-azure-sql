@@ -7,7 +7,7 @@ variables:
   servicePrincipal: http://AbelDeployPrincipal
   servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
   azureSubscriptionName: ca-abewan-demo-test
-  resourceGroupName: abellearndbrg3
+  resourceGroupName: abellearndbrg4
   location: southcentralus
   startip: 0.0.0.0
   endip: 0.0.0.0
