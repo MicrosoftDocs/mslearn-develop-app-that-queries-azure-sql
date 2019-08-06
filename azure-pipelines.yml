@@ -4,7 +4,7 @@ trigger:
   branches:
     include: [ main ] # branch names which will trigger a build
 variables:
-  servicePrincipal: http://carlsspnsqldbcontentsub
+  servicePrincipal: http://carlsspn
   servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
   azureSubscriptionName: SQL Content Team
   resourceGroupName: carllearndbrg3
@@ -112,7 +112,7 @@ stages:
           - task: AzurePowerShell@4
             displayName: 'Configure Environment with PowerShell'
             inputs:
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               ScriptType: 'FilePath'
               ScriptPath: '$(Pipeline.Workspace)/drop/IaC/configureWithPS.ps1'
               ScriptArguments: '-resourceGroupName $(resourceGroupName) -servername $(servername) -dbName $(dbName) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipal $(servicePrincipal) -servicePrincipalTenantId $(servicePrincipalTenantId)'
@@ -139,7 +139,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: Run Update DB Script from DBA
             inputs:
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
@@ -152,7 +152,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: Generate Auto Gen DB Update Script
             inputs:
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
@@ -197,7 +197,7 @@ stages:
             displayName: "Deploy Node 1"
             inputs:
               ConnectionType: 'AzureRM'
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               appType: 'webApp'
               WebAppName: '$(webAppName)'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
@@ -206,7 +206,7 @@ stages:
             displayName: 'Deploy Node 2'
             inputs:
               ConnectionType: 'AzureRM'
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               appType: 'webApp'
               WebAppName: '$(webAppName)2'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
@@ -214,7 +214,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: 'Deploy SQL Schema'
             inputs:
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
@@ -258,7 +258,7 @@ stages:
           - task: AzurePowerShell@4
             displayName: 'Configure Environment with PowerShell'
             inputs:
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               ScriptType: 'FilePath'
               ScriptPath: '$(Pipeline.Workspace)/drop/IaC/configureWithPS.ps1'
               ScriptArguments: '-resourceGroupName $(resourceGroupName) -servername $(servername) -dbName $(dbName) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipal $(servicePrincipal) -servicePrincipalTenantId $(servicePrincipalTenantId)'
@@ -285,7 +285,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: Run Update DB Script from DBA
             inputs:
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
@@ -298,7 +298,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: Generate Auto Gen DB Update Script
             inputs:
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
@@ -344,7 +344,7 @@ stages:
             displayName: 'Deploy Node 1'
             inputs:
               ConnectionType: 'AzureRM'
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               appType: 'webApp'
               WebAppName: '$(webAppName)'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
@@ -353,7 +353,7 @@ stages:
             displayName: 'Deploy Node 2'
             inputs:
               ConnectionType: 'AzureRM'
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               appType: 'webApp'
               WebAppName: '$(webAppName)2'
               packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
@@ -361,7 +361,7 @@ stages:
           - task: SqlAzureDacpacDeployment@1
             displayName: 'Deploy SQL Schema'
             inputs:
-              azureSubscription: 'SQL DB Content (45651c69-8b71-4c76-8ed8-91d1cd16a176)'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
               AuthenticationType: 'server'
               ServerName: '$(servername).database.windows.net'
               DatabaseName: '$(dbName)'
