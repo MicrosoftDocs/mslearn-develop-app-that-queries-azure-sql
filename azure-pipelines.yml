@@ -16,7 +16,7 @@ variables:
   dbFamily: Gen4
   dbCapacity: 1
   dbZoneRedundant: false
-  webAppSku: B1
+  webAppSku: S1
   partnerServerLocation: westus2
   node2Location: westus
   storageAccountSku: Standard_LRS
