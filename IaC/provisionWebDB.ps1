@@ -393,7 +393,7 @@ az sql failover-group create `
 Write-Output "done creating failover group"
 Write-Output ""
 
-# Update connection string to point ot failover
+# Update connection string to point to failover
 #
 Write-Output "Setting connection string to failover..."
 az webapp config connection-string set `
