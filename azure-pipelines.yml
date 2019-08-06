@@ -87,13 +87,13 @@ stages:
       name: Hosted Windows 2019 with VS2019
     variables:
       adminlogin: abel
-      servername: abellearndbserverdev
-      webAppName: abellearndbwebappdev
-      failoverName: learndbserverfailoverdev
-      partnerServerName: learndbserver2dev
-      trafficManagerProfileName: abellearndbtmdev
-      uniqueDNSName: abellearndbuniquedev
-      storageAccountName: abellearndbstoragedev
+      servername: abellearndbserverdev1
+      webAppName: abellearndbwebappdev1
+      failoverName: learndbserverfailoverdev1
+      partnerServerName: learndbserver2dev1
+      trafficManagerProfileName: abellearndbtmdev1
+      uniqueDNSName: abellearndbuniquedev1
+      storageAccountName: abellearndbstoragedev1
     environment: 'courses-dev-provisionInfra'
     strategy:
       runOnce:
@@ -126,7 +126,7 @@ stages:
       name: Hosted Windows 2019 with VS2019
     variables:
       adminlogin: abel
-      servername: abellearndbserverdev
+      servername: abellearndbserverdev1
     environment: 'courses-dev-dbaverification'
     strategy:
       runOnce:
@@ -182,8 +182,8 @@ stages:
       name: Hosted Windows 2019 with VS2019
     variables:
       adminlogin: abel
-      servername: abellearndbserverdev
-      webAppName: abellearndbwebappdev
+      servername: abellearndbserverdev1
+      webAppName: abellearndbwebappdev1
     environment: 'courses-dev'
     strategy:
       runOnce:
@@ -233,13 +233,13 @@ stages:
       name: Hosted Windows 2019 with VS2019
     variables:
       adminlogin: abel
-      servername: abellearndbserverprod
-      webAppName: abellearndbwebappprod
-      failoverName: learndbserverfailoverprod
-      partnerServerName: learndbserver2prod
-      trafficManagerProfileName: abellearndbtmprod
-      uniqueDNSName: abellearndbuniqueprod
-      storageAccountName: abellearndbstorageprod
+      servername: abellearndbserverprod1
+      webAppName: abellearndbwebappprod1
+      failoverName: learndbserverfailoverprod1
+      partnerServerName: learndbserver2prod1
+      trafficManagerProfileName: abellearndbtmprod1
+      uniqueDNSName: abellearndbuniqueprod1
+      storageAccountName: abellearndbstorageprod1
     environment: 'courses-prod-provisionInfra'
     strategy:
       runOnce:
@@ -272,7 +272,7 @@ stages:
       name: Hosted Windows 2019 with VS2019
     variables:
       adminlogin: abel
-      servername: abellearndbserverprod
+      servername: abellearndbserverprod1
     environment: 'courses-prod-dbaverification'
     strategy:
       runOnce:
@@ -328,9 +328,8 @@ stages:
       name: Hosted Windows 2019 with VS2019
     variables:
       adminlogin: abel
-      servername: abellearndbserverprod
-      webAppName: abellearndbwebappprod
-      webAppSku: B1
+      servername: abellearndbserverprod1
+      webAppName: abellearndbwebappprod1
     environment: 'courses-prod'
     strategy:
       runOnce:
