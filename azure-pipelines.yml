@@ -4,7 +4,7 @@ trigger:
   branches:
     include: [ main ] # branch names which will trigger a build
 variables:
-  servicePrincipal: http://CarlDeployPrincipal
+  servicePrincipal: http://carlsspn
   servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
   azureSubscriptionName: SQL DB Content
   resourceGroupName: carlrabsqldbrg3
