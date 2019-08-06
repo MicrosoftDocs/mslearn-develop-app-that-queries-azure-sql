@@ -4,10 +4,10 @@ trigger:
   branches:
     include: [ main ] # branch names which will trigger a build
 variables:
-  servicePrincipal: http://AbelDeployPrincipal
-  servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
-  azureSubscriptionName: ca-abewan-demo-test
-  resourceGroupName: abellearndbrg4
+  servicePrincipal: http://carlsmsdnspn
+  servicePrincipalTenantId: 7adfa0cc-ecff-430a-b33c-2bcfd502ec7e
+  azureSubscriptionName: Visual Studio Enterprise with MSDN
+  resourceGroupName: carllearndbrg4
   location: southcentralus
   startip: 0.0.0.0
   endip: 0.0.0.0
@@ -86,14 +86,14 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: abel
-      servername: abellearndbserverdev1
-      webAppName: abellearndbwebappdev1
+      adminlogin: carl
+      servername: carllearndbserverdev1
+      webAppName: carllearndbwebappdev1
       failoverName: learndbserverfailoverdev1
       partnerServerName: learndbserver2dev1
-      trafficManagerProfileName: abellearndbtmdev1
-      uniqueDNSName: abellearndbuniquedev1
-      storageAccountName: abellearndbstoragedev1
+      trafficManagerProfileName: carllearndbtmdev1
+      uniqueDNSName: carllearndbuniquedev1
+      storageAccountName: carllearndbstoragedev1
     environment: 'courses-dev-provisionInfra'
     strategy:
       runOnce:
@@ -125,8 +125,8 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: abel
-      servername: abellearndbserverdev1
+      adminlogin: carl
+      servername: carllearndbserverdev1
     environment: 'courses-dev-dbaverification'
     strategy:
       runOnce:
@@ -181,9 +181,9 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: abel
-      servername: abellearndbserverdev1
-      webAppName: abellearndbwebappdev1
+      adminlogin: carl
+      servername: carllearndbserverdev1
+      webAppName: carllearndbwebappdev1
     environment: 'courses-dev'
     strategy:
       runOnce:
@@ -232,14 +232,14 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: abel
-      servername: abellearndbserverprod1
-      webAppName: abellearndbwebappprod1
+      adminlogin: carl
+      servername: carllearndbserverprod1
+      webAppName: carllearndbwebappprod1
       failoverName: learndbserverfailoverprod1
       partnerServerName: learndbserver2prod1
-      trafficManagerProfileName: abellearndbtmprod1
-      uniqueDNSName: abellearndbuniqueprod1
-      storageAccountName: abellearndbstorageprod1
+      trafficManagerProfileName: carllearndbtmprod1
+      uniqueDNSName: carllearndbuniqueprod1
+      storageAccountName: carllearndbstorageprod1
     environment: 'courses-prod-provisionInfra'
     strategy:
       runOnce:
@@ -271,8 +271,8 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: abel
-      servername: abellearndbserverprod1
+      adminlogin: carl
+      servername: carllearndbserverprod1
     environment: 'courses-prod-dbaverification'
     strategy:
       runOnce:
@@ -327,9 +327,9 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: abel
-      servername: abellearndbserverprod1
-      webAppName: abellearndbwebappprod1
+      adminlogin: carl
+      servername: carllearndbserverprod1
+      webAppName: carllearndbwebappprod1
     environment: 'courses-prod'
     strategy:
       runOnce:
