@@ -11,7 +11,7 @@ variables:
   location: southcentralus
   startip: 0.0.0.0
   endip: 0.0.0.0
-  dbName: learndbmsdn
+  dbName: carllearndbmsdn
   dbEdition: GeneralPurpose
   dbFamily: Gen4
   dbCapacity: 1
@@ -89,8 +89,8 @@ stages:
       adminlogin: carl
       servername: carllearndbmsdnserverdev1
       webAppName: carllearndbmsdnwebappdev1
-      failoverName: learndbmsdnserverfailoverdev1
-      partnerServerName: learndbmsdnserver2dev1
+      failoverName: carllearndbmsdnserverfailoverdev1
+      partnerServerName: carllearndbmsdnserver2dev1
       trafficManagerProfileName: carllearndbmsdntmdev1
       uniqueDNSName: carllearndbmsdnuniquedev1
       storageAccountName: carllearndbmsdnstoragedev1
@@ -235,8 +235,8 @@ stages:
       adminlogin: carl
       servername: carllearndbmsdnserverprod1
       webAppName: carllearndbmsdnwebappprod1
-      failoverName: learndbmsdnserverfailoverprod1
-      partnerServerName: learndbmsdnserver2prod1
+      failoverName: carllearndbmsdnserverfailoverprod1
+      partnerServerName: carllearndbmsdnserver2prod1
       trafficManagerProfileName: carllearndbmsdntmprod1
       uniqueDNSName: carllearndbmsdnuniqueprod1
       storageAccountName: carllearndbmsdnstorageprod1
