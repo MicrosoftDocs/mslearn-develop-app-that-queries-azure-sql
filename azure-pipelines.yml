@@ -6,7 +6,7 @@ trigger:
 variables:
   servicePrincipal: http://carlsspn
   servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
-  azureSubscriptionName: SQL DB Content
+  azureSubscriptionName: SQL Content Team
   resourceGroupName: carllearndbrg3
   location: southcentralus
   startip: 0.0.0.0
