@@ -348,18 +348,18 @@ Upload-DefaultData -dbServerName $servername -dbId $dbName -userId $adminLogin -
 
 # Create a logical sql server in the resource group
 # 
-Write-Output "Creating sql server for failover..."
-try {
+#Write-Output "Creating sql server for failover..."
+#try {
     az sql server create `
     --name $partnerServerName `
     --resource-group $resourceGroupName `
-    --location $partnerServerLocation  `
+    --location $partnerServerLocation `
     --admin-user $adminlogin `
     --admin-password $adminPassword
-}
-catch {
-    Write-Output "Partner SQL Server already exists"
-}
+#}
+#catch {
+#    Write-Output "Partner SQL Server already exists"
+#}
 Write-Output "Done creating sql server for failover"
 Write-Output ""
 
