@@ -87,13 +87,13 @@ stages:
       name: Hosted Windows 2019 with VS2019
     variables:
       adminlogin: carl
-      servername: carllearndbserverdev
-      webAppName: carllearndbwebappdev
-      failoverName: learndbserverfailoverdev
-      partnerServerName: learndbserver2dev
-      trafficManagerProfileName: carllearndbtmdev
-      uniqueDNSName: carllearndbuniquedev
-      storageAccountName: carllearndbstoragedev
+      servername: carllearndbserverdev5
+      webAppName: carllearndbwebappdev5
+      failoverName: learndbserverfailoverdev5
+      partnerServerName: learndbserver2dev5
+      trafficManagerProfileName: carllearndbtmdev5
+      uniqueDNSName: carllearndbuniquedev5
+      storageAccountName: carllearndbstoragedev5
     environment: 'courses-dev-provisionInfra'
     strategy:
       runOnce:
@@ -125,8 +125,8 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carl
-      servername: carllearndbserverdev
+      adminlogin: carl5
+      servername: carllearndbserverdev5
     environment: 'courses-dev-dbaverification'
     strategy:
       runOnce:
@@ -181,9 +181,9 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carl
-      servername: carllearndbserverdev
-      webAppName: carllearndbwebappdev
+      adminlogin: carl5
+      servername: carllearndbserverdev5
+      webAppName: carllearndbwebappdev5
     environment: 'courses-dev'
     strategy:
       runOnce:
@@ -232,14 +232,14 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carl
-      servername: carllearndbserverprod
-      webAppName: carllearndbwebappprod
-      failoverName: learndbserverfailoverprod
-      partnerServerName: learndbserver2prod
-      trafficManagerProfileName: carllearndbtmprod
-      uniqueDNSName: carllearndbuniqueprod
-      storageAccountName: carllearndbstorageprod
+      adminlogin: carl5
+      servername: carllearndbserverprod5
+      webAppName: carllearndbwebappprod5
+      failoverName: learndbserverfailoverprod5
+      partnerServerName: learndbserver2prod5
+      trafficManagerProfileName: carllearndbtmprod5
+      uniqueDNSName: carllearndbuniqueprod5
+      storageAccountName: carllearndbstorageprod5
     environment: 'courses-prod-provisionInfra'
     strategy:
       runOnce:
@@ -271,8 +271,8 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carl
-      servername: carllearndbserverprod
+      adminlogin: carl5
+      servername: carllearndbserverprod5
     environment: 'courses-prod-dbaverification'
     strategy:
       runOnce:
@@ -327,9 +327,9 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carl
-      servername: carllearndbserverprod
-      webAppName: carllearndbwebappprod
+      adminlogin: carl5
+      servername: carllearndbserverprod5
+      webAppName: carllearndbwebappprod5
       webAppSku: S1
     environment: 'courses-prod'
     strategy:
