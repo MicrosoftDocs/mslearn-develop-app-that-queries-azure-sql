@@ -17,8 +17,8 @@ variables:
   dbCapacity: 1
   dbZoneRedundant: false
   webAppSku: S1
-  partnerServerLocation: westus2
-  node2Location: westus
+  partnerServerLocation: eastus
+  node2Location: eastus
   storageAccountSku: Standard_LRS
   
 stages:
@@ -86,7 +86,7 @@ stages:
     pool:
       name: Hosted Windows 2019 with VS2019
     variables:
-      adminlogin: carl
+      adminlogin: carl5
       servername: carllearndbserverdev5
       webAppName: carllearndbwebappdev5
       failoverName: learndbserverfailoverdev5

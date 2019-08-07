@@ -216,7 +216,7 @@ try {
     az sql server create `
     --name $servername `
     --resource-group $resourceGroupName `
-    --location $location  `
+    --location $location `
     --admin-user $adminlogin `
     --admin-password $adminPassword
 }
