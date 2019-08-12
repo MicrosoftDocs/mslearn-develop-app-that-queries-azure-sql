@@ -1,0 +1,373 @@
+name: $(Date:yyyMMdd)$(Rev:.r)
+trigger:
+  batch: false # batch changes if true (the default); start a new build for every push if false
+  branches:
+    include: [ main ] # branch names which will trigger a build
+variables:
+  servicePrincipal: http://carlsspnsqlcontentteam
+  servicePrincipalTenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
+  azureSubscriptionName: SQL Content Team
+  resourceGroupName: carllearndbrg5
+  location: southcentralus
+  startip: 0.0.0.0
+  endip: 0.0.0.0
+  dbName: learndb
+  dbEdition: GeneralPurpose
+  dbFamily: Gen4
+  dbCapacity: 1
+  dbZoneRedundant: false
+  webAppSku: S1
+  partnerServerLocation: eastus
+  node2Location: eastus
+  storageAccountSku: Standard_LRS
+  
+stages:
+- stage: Build
+  jobs:
+  - job: BuildJob
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    variables:
+      BuildConfiguration: Debug
+      BuildPlatform: any cpu
+
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: Restore
+      inputs:
+        command: restore
+        projects: '**/*.csproj'
+    
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        projects: '**/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+    
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: test
+        projects: '$(Parameters.TestProjects)'
+        arguments: '--configuration $(BuildConfiguration)'
+    
+    - task: DotNetCoreCLI@2
+      displayName: Publish
+      inputs:
+        command: publish
+        publishWebProjects: True
+        arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+        zipAfterPublish: True
+    
+    - task: VSBuild@1
+      displayName: 'Build solution Database/Database.sln'
+      inputs:
+        solution: Database/Database.sln
+    
+    - task: CopyFiles@2
+      displayName: 'Copy dacpac, IaC, and data Files to Staging'
+      inputs:
+        Contents: |
+         Database/bin/**/*.dacpac
+         IaC/**
+         data/**
+        TargetFolder: '$(Build.StagingDirectory)'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+      condition: succeededOrFailed()
+
+- stage: ProvisionDevInfra
+  jobs:
+  - deployment: ProvisionDevInfra
+    displayName: Provision Dev Infra Web and DB
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    variables:
+      adminlogin: carl5
+      servername: carllearndbserverdev5
+      webAppName: carllearndbwebappdev5
+      failoverName: learndbserverfailoverdev5
+      partnerServerName: learndbserver2dev5
+      trafficManagerProfileName: carllearndbtmdev5
+      uniqueDNSName: carllearndbuniquedev5
+      storageAccountName: carllearndbstoragedev5
+    environment: 'courses-dev-provisionInfra'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
+
+          - task: PowerShell@2
+            displayName : 'Provision DB and Web'
+            inputs:
+              filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName "$(azureSubscriptionName)" -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location) -storageAccountName $(storageAccountName) -storageAccountSku $(storageAccountSku)'
+
+          - task: AzurePowerShell@4
+            displayName: 'Configure Environment with PowerShell'
+            inputs:
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              ScriptType: 'FilePath'
+              ScriptPath: '$(Pipeline.Workspace)/drop/IaC/configureWithPS.ps1'
+              ScriptArguments: '-resourceGroupName $(resourceGroupName) -servername $(servername) -dbName $(dbName) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipal $(servicePrincipal) -servicePrincipalTenantId $(servicePrincipalTenantId)'
+              azurePowerShellVersion: 'LatestVersion'
+          
+- stage: DBAVerificationDev
+  jobs:
+  - deployment: DBAVerificationDev
+    displayName: DBA Verify DB Deployment Script to Dev
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    variables:
+      adminlogin: carl5
+      servername: carllearndbserverdev5
+    environment: 'courses-dev-dbaverification'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
+          
+          - task: SqlAzureDacpacDeployment@1
+            displayName: Run Update DB Script from DBA
+            inputs:
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              AuthenticationType: 'server'
+              ServerName: '$(servername).database.windows.net'
+              DatabaseName: '$(dbName)'
+              SqlUsername: '$(adminlogin)'
+              SqlPassword: '$(adminPasswordDev)'
+              deployType: 'SqlTask'
+              SqlFile: '$(Pipeline.Workspace)/drop/data/UpdateDB.sql'
+              IpDetectionMethod: 'AutoDetect'
+
+          - task: SqlAzureDacpacDeployment@1
+            displayName: Generate Auto Gen DB Update Script
+            inputs:
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              AuthenticationType: 'server'
+              ServerName: '$(servername).database.windows.net'
+              DatabaseName: '$(dbName)'
+              SqlUsername: '$(adminlogin)'
+              SqlPassword: '$(adminPasswordDev)'
+              deployType: 'DacpacTask'
+              DeploymentAction: 'Script'
+              DacpacFile: '$(Pipeline.Workspace)/drop/Database/bin/Debug/Database.dacpac'
+              IpDetectionMethod: 'AutoDetect'
+          
+          - task: PowerShell@2
+            displayName: Show Auto Generated SQL Script
+            inputs:
+              targetType: 'inline'
+              script: |
+                # Write your PowerShell commands here.
+                
+                Write-Host "Auto Generated SQL Update Script:"
+                
+                Get-Content d:\a\1\s\GeneratedOutputFiles\learndb_Script.sql | foreach {Write-Output $_}
+              
+- stage: DeployToDev
+  jobs:
+  - deployment: DeployInfraWebDB
+    displayName: Deploy Web and DB
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    variables:
+      adminlogin: carl5
+      servername: carllearndbserverdev5
+      webAppName: carllearndbwebappdev5
+    environment: 'courses-dev'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
+
+          - task: AzureRmWebAppDeployment@4
+            displayName: "Deploy Node 1"
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              appType: 'webApp'
+              WebAppName: '$(webAppName)'
+              packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
+
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy Node 2'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              appType: 'webApp'
+              WebAppName: '$(webAppName)2'
+              packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
+
+          - task: SqlAzureDacpacDeployment@1
+            displayName: 'Deploy SQL Schema'
+            inputs:
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              AuthenticationType: 'server'
+              ServerName: '$(servername).database.windows.net'
+              DatabaseName: '$(dbName)'
+              SqlUsername: '$(adminlogin)'
+              SqlPassword: '$(adminPasswordDev)'
+              deployType: 'DacpacTask'
+              DeploymentAction: 'Publish'
+              DacpacFile: '$(Pipeline.Workspace)/drop/Database/bin/Debug/Database.dacpac'
+              IpDetectionMethod: 'AutoDetect'
+
+- stage: ProvisionProdInfra
+  jobs:
+  - deployment: ProvisionProdInfra
+    displayName: Provision Prod Infra Web and DB
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    variables:
+      adminlogin: carl5
+      servername: carllearndbserverprod5
+      webAppName: carllearndbwebappprod5
+      failoverName: learndbserverfailoverprod5
+      partnerServerName: learndbserver2prod5
+      trafficManagerProfileName: carllearndbtmprod5
+      uniqueDNSName: carllearndbuniqueprod5
+      storageAccountName: carllearndbstorageprod5
+    environment: 'courses-prod-provisionInfra'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
+
+          - task: PowerShell@2
+            displayName : 'Provision DB and Web'
+            inputs:
+              filePath: '$(Pipeline.Workspace)/drop/IaC/provisionWebDB.ps1'
+              arguments: '-servicePrincipal $(servicePrincipal) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipalTenantId $(servicePrincipalTenantId) -azureSubscriptionName "$(azureSubscriptionName)" -resourceGroupName $(resourceGroupName) -location $(location) -adminlogin $(adminlogin) -adminPassword $(adminPasswordDev) -servername $(servername) -startip $(startip) -endip $(endip) -dbName $(dbName) -dbEdition $(dbEdition) -dbFamily $(dbFamily) -dbCapacity $(dbCapacity) -dbZoneRedundant $(dbZoneRedundant) -webAppName $(webAppName) -webAppSku $(webAppSku) -releaseDirectory $(Pipeline.Workspace) -failoverName $(failoverName) -partnerServerName $(partnerServerName) -partnerServerLocation $(partnerServerLocation) -trafficManagerProfileName $(trafficManagerProfileName) -uniqueDNSName $(uniqueDNSName) -node2Location $(node2Location) -storageAccountName $(storageAccountName) -storageAccountSku $(storageAccountSku)'
+
+          - task: AzurePowerShell@4
+            displayName: 'Configure Environment with PowerShell'
+            inputs:
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              ScriptType: 'FilePath'
+              ScriptPath: '$(Pipeline.Workspace)/drop/IaC/configureWithPS.ps1'
+              ScriptArguments: '-resourceGroupName $(resourceGroupName) -servername $(servername) -dbName $(dbName) -servicePrincipalSecret $(servicePrincipalSecret) -servicePrincipal $(servicePrincipal) -servicePrincipalTenantId $(servicePrincipalTenantId)'
+              azurePowerShellVersion: 'LatestVersion'
+          
+- stage: DBAVerificationProd
+  jobs:
+  - deployment: DBAVerificationProd
+    displayName: DDBA Verify DB Deployment Script to Prod
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    variables:
+      adminlogin: carl5
+      servername: carllearndbserverprod5
+    environment: 'courses-prod-dbaverification'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
+          
+          - task: SqlAzureDacpacDeployment@1
+            displayName: Run Update DB Script from DBA
+            inputs:
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              AuthenticationType: 'server'
+              ServerName: '$(servername).database.windows.net'
+              DatabaseName: '$(dbName)'
+              SqlUsername: '$(adminlogin)'
+              SqlPassword: '$(adminPasswordDev)'
+              deployType: 'SqlTask'
+              SqlFile: '$(Pipeline.Workspace)/drop/data/UpdateDB.sql'
+              IpDetectionMethod: 'AutoDetect'
+          
+          - task: SqlAzureDacpacDeployment@1
+            displayName: Generate Auto Gen DB Update Script
+            inputs:
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              AuthenticationType: 'server'
+              ServerName: '$(servername).database.windows.net'
+              DatabaseName: '$(dbName)'
+              SqlUsername: '$(adminlogin)'
+              SqlPassword: '$(adminPasswordProd)'
+              deployType: 'DacpacTask'
+              DeploymentAction: 'Script'
+              DacpacFile: '$(Pipeline.Workspace)/drop/Database/bin/Debug/Database.dacpac'
+              IpDetectionMethod: 'AutoDetect'
+          
+          - task: PowerShell@2
+            displayName: Show SQL Generated Script
+            inputs:
+              targetType: 'inline'
+              script: |
+                # Write your PowerShell commands here.
+                
+                Write-Host "Auto Generated SQL Update Script:"
+                
+                Get-Content d:\a\1\s\GeneratedOutputFiles\learndb_Script.sql | foreach {Write-Output $_}
+
+- stage: DeployToProd
+  jobs:
+  - deployment: DeployWebDB
+    displayName: Deploy Web and DB
+    pool:
+      name: Hosted Windows 2019 with VS2019
+    variables:
+      adminlogin: carl5
+      servername: carllearndbserverprod5
+      webAppName: carllearndbwebappprod5
+      webAppSku: S1
+    environment: 'courses-prod'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
+
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy Node 1'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              appType: 'webApp'
+              WebAppName: '$(webAppName)'
+              packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
+
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy Node 2'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              appType: 'webApp'
+              WebAppName: '$(webAppName)2'
+              packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
+
+          - task: SqlAzureDacpacDeployment@1
+            displayName: 'Deploy SQL Schema'
+            inputs:
+              azureSubscription: 'SQL Content Team (d8392f63-30b0-4d4f-9ebb-90af66a30612)'
+              AuthenticationType: 'server'
+              ServerName: '$(servername).database.windows.net'
+              DatabaseName: '$(dbName)'
+              SqlUsername: '$(adminlogin)'
+              SqlPassword: '$(adminPasswordProd)'
+              deployType: 'DacpacTask'
+              DeploymentAction: 'Publish'
+              DacpacFile: '$(Pipeline.Workspace)/drop/Database/bin/Debug/Database.dacpac'
+              IpDetectionMethod: 'AutoDetect'          
